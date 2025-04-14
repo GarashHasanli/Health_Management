@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kayıt Ol - Sağlık Yönetim Platformu</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+      integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="style.js" defer></script>
+  </head>
+  <body>
+    <div class="navbar">
+      <a href="index.html"><i class="fa-solid fa-house"></i>Anasayfa</a>
+      <a href="about.html"><i class="fa-solid fa-address-card"></i>Hakkımızda</a>
+      <a href="login.html" class="active"><i class="fa-solid fa-right-to-bracket"></i>Giriş</a>
+    </div>
+
+    <div class="register-container">
+      <h1 class="register-title">Kayıt Ol</h1>
+      <form id="register-form">
+        <label for="first-name" class="register-label">İsim:</label>
+        <input
+          type="text"
+          id="first-name"
+          name="first-name"
+          class="register-input"
+          placeholder="İsminizi girin"
+          required
+        />
+        <div class="error-message" id="first-name-error">Bu alan boş bırakılmamalıdır.</div>
+
+        <label for="last-name" class="register-label">Soyisim:</label>
+        <input
+          type="text"
+          id="last-name"
+          name="last-name"
+          class="register-input"
+          placeholder="Soyisminizi girin"
+          required
+        />
+        <div class="error-message" id="last-name-error">Bu alan boş bırakılmamalıdır.</div>
+
+        <label for="phone" class="register-label">Telefon Numarası:</label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          class="register-input"
+          placeholder="05XX XXX XX XX"
+          required
+        />
+        <div class="error-message" id="phone-error">Bu alan boş bırakılmamalıdır.</div>
+
+        <label for="password" class="register-label">Şifre:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="register-input"
+          placeholder="*******"
+          required
+        />
+        <div class="error-message" id="password-error">Bu alan boş bırakılmamalıdır.</div>
+
+        <label for="confirm-password" class="register-label">Şifre Tekrarı:</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          class="register-input"
+          placeholder="Şifrenizi tekrar girin"
+          required
+        />
+        <div class="error-message" id="confirm-password-error">Şifreler uyuşmuyor.</div>
+
+        <button type="button" id="register-button" class="register-button">Kayıt Ol</button>
+      </form>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2024 Sağlık Yönetim Platformu. Tüm Hakları Saklıdır.</p>
+    </footer>
+  </body>
+</html>

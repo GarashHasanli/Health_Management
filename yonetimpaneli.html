@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yönetim Paneli</title>
+  <!-- Varsayılan CSS dosyası -->
+  <link rel="stylesheet" href="yonetimpaneli.css">
+  <!-- FontAwesome (isteğe bağlı, telefon/şifre ikonları için) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+    integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<body>
+  <!-- Sol Menü (Sidebar) -->
+  <div class="sidebar">
+    <ul class="nav">
+      <!-- FT Listesi + Yeni FT Ekleme menüsü varsayılan olarak aktif -->
+      <li class="nav-item active">
+        <!-- Sayfa yenilenmeyecek, bu sayfada kalıyoruz -->
+        <a href="javascript:void(0)">FT Listesi + Yeni FT Ekleme</a>
+      </li>
+      <li class="nav-item">
+        <a href="hastalistesi.html">Hasta Listesi</a>
+      </li>
+      <li class="nav-item">
+        <a href="raporlar.html">Raporlar</a>
+      </li>
+      <li class="nav-item">
+        <a href="bildirim.html">Bildirimler</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- İçerik Alanı -->
+  <div class="content">
+    <h1>Yönetim Paneli</h1>
+
+    <!-- FT Listesi + Yeni FT Ekleme -->
+    <h2>FT Listesi + Yeni FT Ekleme</h2>
+
+    <!-- FT Listesi Tablosu -->
+    <div class="ft-list">
+      <h3>Mevcut FT Listesi</h3>
+      <table id="secretary-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>İsim</th>
+            <th>Telefon</th>
+            <th>Kayıt Tarihi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS ile doldurulacak -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Yeni FT Ekleme Formu -->
+    <div class="ft-ekle">
+      <h3>Yeni FT Ekle</h3>
+      <form id="ft-form">
+        <div class="form-group">
+          <label for="ft-phone">
+            <i class="fa-solid fa-phone"></i> Telefon Numarası:
+          </label>
+          <input
+            type="tel"
+            id="ft-phone"
+            name="phone"
+            placeholder="0 (5XX) XXX XX XX"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="ft-password">
+            <i class="fa-solid fa-lock"></i> Şifre:
+          </label>
+          <input
+            type="password"
+            id="ft-password"
+            name="password"
+            placeholder="Şifre"
+            required
+          />
+        </div>
+
+        <button type="submit" id="ft-ekle-btn">FT Ekle</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="yonetimpaneli.js"></script>
+</body>
+</html>

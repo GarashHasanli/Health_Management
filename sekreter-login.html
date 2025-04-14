@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekreter FT Girişi - Sağlık Yönetim Platformu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" 
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Anasayfa</a>
+        <a href="about.html"><i class="fa-solid fa-address-card"></i> Hakkımızda</a>
+        
+        <div class="dropdown">
+            <a href="login.html" class="active"><i class="fa-solid fa-right-to-bracket"></i> Giriş</a>
+            <div class="dropdown-content">
+                <a href="hasta-login.html">Hasta Girişi</a>
+                <a href="sekreter-login.html">Sekreter + FT Girişi</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Giriş Formu -->
+    <div class="login-form">
+        <h1>Sekreter FT Girişi</h1>
+        <form id="login-form">
+            <label for="phone">Telefon Numarası:</label>
+            <input type="tel" id="phone" name="phone" placeholder="05XX XXX XX XX" required>
+            <div class="error-message" id="phone-error">Bu alan boş bırakılmamalıdır.</div>
+
+            <label for="otp">Şifre:</label>
+            <input type="password" id="otp" name="otp" placeholder="*******" required>
+            <div class="error-message" id="otp-error">Bu alan boş bırakılmamalıdır.</div>
+
+            <button type="button" id="login-button">Giriş Yap</button>
+            <button type="button" id="register-button">Kayıt Ol</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Sağlık Yönetim Platformu. Tüm Hakları Saklıdır.</p>
+    </footer>
+
+    <script src="style.js"></script>
+</body>
+</html>

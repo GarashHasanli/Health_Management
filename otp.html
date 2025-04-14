@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Doğrulama</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="style.js" defer></script> 
+</head>
+<body>
+    <div class="otp-form">
+        <h1>OTP Doğrulama</h1>
+        <form id="otp-form">
+            <label for="otp">Telefonunuza gelen OTP kodunu girin:</label>
+            <input type="text" id="otp" name="otp" placeholder="XXXX" required>
+            <div class="error-message" id="otp-error">Bu alan boş bırakılamaz.</div> 
+            <button type="button" id="verify-button">Doğrula</button> 
+        </form>
+    </div>
+</body>
+</html>

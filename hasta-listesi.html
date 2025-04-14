@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hasta Listesi ve Ekleme Alanı</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+  <div class="hasta-liste-alani">
+    <h2>Hasta Listesi ve Ekleme Alanı</h2>
+    <div class="hasta-ekle">
+      <h3>Yeni Hasta Ekle</h3>
+      <label for="hastaAdi">Hasta Adı:</label>
+      <input type="text" id="hastaAdi" placeholder="Hasta Adını Girin">
+
+      <label for="durum">Durum:</label>
+      <select id="durum">
+        <option value="Aktif">Aktif</option>
+        <option value="Pasif">Pasif</option>
+        <option value="Beklemede">Beklemede</option>
+      </select>
+
+      <button id="ekleButonu">Ekle</button>
+    </div>
+
+    <table class="hasta-tablosu">
+      <thead>
+        <tr>
+          <th>Hasta Adı</th>
+          <th>Durum</th>
+          <th>İletişim</th>
+        </tr>
+      </thead>
+      <tbody id="hastaListesi">
+        <tr>
+          <td>Ali Yılmaz</td>
+          <td>Aktif</td>
+          <td class="iletisim-ikonlari">
+            <button class="mesaj-btn"><i class="fas fa-comment-alt"></i> Mesaj</button>
+            <button class="sesli-btn"><i class="fas fa-phone-alt"></i> Sesli</button>
+            <button class="goruntulu-btn"><i class="fas fa-video"></i> Görüntülü</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Ayşe Kaya</td>
+          <td>Pasif</td>
+          <td class="iletisim-ikonlari">
+            <button class="mesaj-btn"><i class="fas fa-comment-alt"></i> Mesaj</button>
+            <button class="sesli-btn"><i class="fas fa-phone-alt"></i> Sesli</button>
+            <button class="goruntulu-btn"><i class="fas fa-video"></i> Görüntülü</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,1032 @@
+html body{
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+html body{
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #103346;
+    color: white;
+    padding: 1rem;
+    position: relative;
+}
+
+.navbar a{
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    margin: 0 1rem;
+    position: relative;
+}
+
+.navbar a:hover{
+    color: #ffdd00;
+}
+
+.navbar .active{
+    border-bottom: 2px solid #ffdd00;
+}
+
+.navbar i{
+    padding-right: 0.5rem;
+}
+
+/* Dropdown Menü */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Açılır İçerik */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #103346;
+    min-width: 180px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* İçerik Linkleri */
+.dropdown-content a {
+    color: #103346;
+    padding: 10px 15px;
+    display: block;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+/* Hover Durumu */
+.dropdown-content a:hover {
+    background-color: #103346;
+}
+
+/* Dropdown Açılma Durumu */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Login Kısmı */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #0e3857;
+    padding: 1rem;
+    text-align: center;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin: 0 15px;
+}
+
+.navbar a.active {
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: #ffdd00;
+}
+
+  .login-form {
+    padding: 2rem;
+    max-width: 400px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .login-form h1 {
+    font-size: 3rem;
+    color: #0978b1;
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-form label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    text-align: left;
+  }
+  
+  .login-form input {
+    width: 95%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  input.error {
+    border: 2px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  
+  .login-form button {
+    width: 50%;
+    padding: 0.7rem;
+    background-color: #0978b1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-form button:hover {
+    background-color: #0e3857;
+  }
+  
+  .login-form button:focus {
+    outline: none;
+  }
+
+
+  /*Footer kismi*/
+  
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f1f1f1;
+    margin-top: 2rem;
+  }
+  
+
+.content{
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content h1{
+    font-size: 2.5rem;
+    color: #0991a5;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+.content p{
+    font-size: 1.2rem;
+    text-align: justify;
+}
+.hero{
+    text-align: center;
+    padding: 5rem 1rem;
+    background: #0d5b71;
+    color: white;
+}
+
+.hero h1{
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+.hero p{
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.hero button{
+    background-color: #ffdd00;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.hero button:hover{
+    background-color: #ffc300;
+}
+.features{
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+.feature{
+    text-align: center;
+    max-width: 300px;
+}
+
+.feature h3{
+    font-size: 1.8rem;
+    color: #0991a5;
+    margin-bottom: 0.5rem;
+}
+.feature p{
+    font-size: 1.2rem;
+    color: #555;
+}
+
+
+/* OTP Form Stili */
+.otp-form {
+    padding: 2rem;
+    max-width: 400px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.otp-form h1 {
+    font-size: 2rem;
+    color: #0991a5;
+    margin-bottom: 1.5rem;
+}
+
+.otp-form label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    text-align: left;
+}
+
+.otp-form input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.otp-form input:focus {
+    border-color: #0991a5;
+    outline: none;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    display: none; 
+}
+
+.otp-form input.error {
+    border-color: red;
+}
+
+
+.otp-form button {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: #0991a5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.otp-form button:hover {
+    background-color: #003399;
+}
+
+
+
+
+.footer{
+    text-align: center !important;
+    padding: 1rem;
+    background-color: #103346;
+    color: white;
+    margin-top: 2rem;
+    font-size: 1rem;
+
+}
+
+
+.feature p{
+    text-align: center;
+}
+
+
+/*Register Kismi*/
+.register-container {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+.register-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.register-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.register-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.register-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+error-message {
+    color: red;
+    font-size: 12px;
+    display: none; 
+}
+
+.register-input.error {
+    border: 2px solid red;
+}
+
+
+.register-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+    background-color: #0056b3;
+}
+/*Hasta LIstesi Kismi*/
+.hasta-liste-alani {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  
+  .hasta-ekle {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .hasta-ekle h3 {
+    margin-bottom: 10px;
+  }
+  
+  .hasta-ekle label {
+    display: block;
+    margin: 10px 0 5px;
+  }
+  
+  .hasta-ekle input, 
+  .hasta-ekle select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .hasta-ekle button {
+    background-color: #80a742;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+  }
+  
+  .hasta-ekle button:hover {
+    background-color: #447232;
+  }
+  
+  .hasta-tablosu {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .hasta-tablosu th, 
+  .hasta-tablosu td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .hasta-tablosu th {
+    background-color: #1a4723;
+    color: white;
+  }
+  
+  .hasta-tablosu tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .iletisim-ikonlari button {
+    background-color: #447232;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .iletisim-ikonlari button i {
+    margin-right: 5px;
+  }
+  
+  .iletisim-ikonlari button:hover {
+    background-color: #1a4723;
+  }
+  
+  /* Font Awesome ikonları için */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+  
+
+  /*Hasta Bilgilendirme kismi*/
+
+#bilgilendirme-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f4f6;
+    color: #333;
+}
+
+#bilgilendirme-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#tedavi-plani {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #0e5767;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#plan-baslik {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+#plan-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.plan-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#plan-var {
+    background-color: #28a745;
+}
+
+#plan-var:hover {
+    background-color: #218838;
+}
+
+#plan-yok {
+    background-color: #dc3545;
+}
+
+#plan-yok:hover {
+    background-color: #c82333;
+}
+
+/* Başlık Alanı */
+#bilgilendirme-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#bilgilendirme-baslik {
+    font-size: 2.2rem;
+    color: #0a8ea2;
+    margin-bottom: 10px;
+}
+
+/* Bilgilendirme ve Video Alanı */
+#bilgilendirme-info {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    flex: 1;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-baslik {
+    font-size: 1.5rem;
+    color: #0a8ea2;
+    margin-bottom: 15px;
+}
+
+.info-aciklama {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+.info-list {
+    margin: 10px 0 20px 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+.info-list li {
+    margin-bottom: 8px;
+    list-style-type: disc;
+}
+
+.info-video {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/*plan-yok kismi*/
+#hasta-tedavi-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+}
+
+#hasta-tedavi-container {
+    width: 90%;
+    max-width: 900px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#tedavi-sabit-mesaj {
+    background-color: #e0f7fa;
+    color: #004d40;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+#tedavi-baslik {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead th {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/*plan-var kismi*/
+
+#gorusme-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+}
+
+#gorusme-container {
+    width: 90%;
+    max-width: 900px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#gorusme-sabit-mesaj {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+
+#haklar-bilgisi {
+    margin-bottom: 30px;
+}
+
+#haklar-baslik {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#haklar-listesi {
+    list-style-type: none;
+    padding: 0;
+}
+
+#haklar-listesi li {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #555;
+}
+
+
+#randevu-bilgisi {
+    margin-bottom: 30px;
+}
+
+#randevu-baslik {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+thead th {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+#randevu-basvuru {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+#randevu-basvuru:hover {
+    background-color: #45a049;
+}
+
+
+#video-gorusme {
+    text-align: center;
+}
+
+#video-baslik {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#video-gorusme p {
+    font-size: 1rem;
+    color: #777;
+}
+
+/*Tedavi-plan-akisi kismi*/
+
+#tedavi-plan-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+
+
+#navbar {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#navbar-title {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+#navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+#navbar-links li {
+    display: inline;
+}
+
+#navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+#navbar-links a:hover {
+    text-decoration: underline;
+}
+
+
+#timeline-container {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+}
+
+#timeline-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+#timeline {
+    list-style: none;
+    padding: 0;
+}
+
+.timeline-item {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+.content-section {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+}
+
+.content-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.content-section p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+/*yonetim paneli*/
+
+
+#yonetim-panel-body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#yonetim-panel-container {
+    display: flex;
+    width: 100%;
+}
+
+
+#sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    margin: 10px 0;
+}
+
+#sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+#sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+#topbar {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#topbar h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+#cikis-yap {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#cikis-yap:hover {
+    background-color: #c0392b;
+}
+
+#main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+#dashboard {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#dashboard h2 {
+    margin-top: 0;
+    color: #34495e;
+}
+
+#dashboard p {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+
+

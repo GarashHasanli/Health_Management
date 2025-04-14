@@ -1,0 +1,250 @@
+/* Genel Ayarlar */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Sidebar (Sol Menü) */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    padding-top: 20px;
+  }
+  
+  .nav {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .nav .nav-item {
+    border-bottom: 1px solid #444;
+  }
+  
+  .nav .nav-item a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #ccc;
+  }
+  
+  /* Aktif veya hover durumundaki menü öğesi */
+  .nav .nav-item.active a,
+  .nav .nav-item a:hover {
+    background-color: #f0ad4e; 
+    color: #fff;
+  }
+  
+  /* İçerik Alanı */
+  .content {
+    margin-left: 250px; 
+    padding: 20px;
+  }
+  
+  h1 {
+    margin-top: 0;
+  }
+  
+  /* FT Listesi Tablosu */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f0ad4e;
+    color: #fff;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Form Stilleri */
+  .ft-ekle {
+    margin-top: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .form-group i {
+    margin-right: 5px;
+    color: #666;
+  }
+  
+  .form-group input {
+    width: 300px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  #ft-ekle-btn {
+    background-color: #1ABC9C ;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+  }
+  
+  #ft-ekle-btn:hover {
+    background-color: #16A085; 
+  }
+
+
+  /*Yönetim paneli içindeki Hasta Listesi kısmı*/
+
+  /* Genel Sayfa Stili */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+/* Sol Sidebar */
+.sidebar {
+    width: 230px;
+    background: #2C3E50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 3px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar .nav {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .nav-item {
+    margin: 15px 0;
+    transition: background 0.3s ease;
+}
+
+.sidebar .nav-item a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.sidebar .nav-item a:hover,
+.sidebar .nav-item.active a {
+    background: #1ABC9C;
+    color: #fff;
+}
+
+/* İçerik Alanı */
+.content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+h1, h3 {
+    color: #2C3E50;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #1ABC9C;
+    color: white;
+}
+
+td {
+    background: #fff;
+}
+
+/* Form Alanı */
+.hasta-ekle, .tedavi-plani {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    color: #2C3E50;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Butonlar */
+button {
+    background: #1ABC9C;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+    display: block;
+    width: 100%;
+}
+
+button:hover {
+    background: #16A085;
+}
