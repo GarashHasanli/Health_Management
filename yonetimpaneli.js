@@ -1,66 +1,98 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const secretaryTableBody = document.querySelector("#secretary-table tbody");
-    const ftForm = document.getElementById("ft-form");
-    const ftPhoneInput = document.getElementById("ft-phone");
-    const ftPasswordInput = document.getElementById("ft-password");
-
-    // Sayfa yüklendiğinde FT listesini çek
+document.addEventListener("DOMContentLoaded", () => {
+    const tbody = document.querySelector("#secretary-table tbody");
+    const form = document.getElementById("ft-form");
+    const nameInput = document.getElementById("ft-name");
+    const phoneInput = document.getElementById("ft-phone");
+  
     loadSecretaries();
-
-    // Yeni FT Ekleme İşlemi
-    ftForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const phone = ftPhoneInput.value.trim();
-        const password = ftPasswordInput.value.trim();
-
-        if (!phone || !password) {
-            alert("Lütfen tüm alanları doldurun!");
-            return;
-        }
-
-        const newSecretary = { phone, password };
-
-        fetch("http://localhost:3000/secretaries", {  
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newSecretary)
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text) });
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message || "İşlem tamam");
-            ftForm.reset();
-            loadSecretaries();
-        })
-        .catch(error => console.error("Yeni FT eklenirken hata:", error));
+  
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      if (!name || !phone) return alert("Lütfen tüm alanları doldurun!");
+  
+      try {
+        const res = await fetch("http://localhost:3000/secretaries", {
+          method: "POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ name, phone })
+        });
+        if (!res.ok) throw await res.text();
+        alert("FT başarıyla eklendi");
+        form.reset();
+        loadSecretaries();
+      } catch(err) {
+        console.error(err);
+        alert("Eklerken hata: " + err);
+      }
     });
-
-    // FT Listesini Getirme Fonksiyonu
-    function loadSecretaries() {
-        fetch("http://localhost:3000/secretaries")  
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                secretaryTableBody.innerHTML = "";
-                data.forEach(sec => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${sec.id}</td>
-                        <td>${sec.phone}</td>
-                        <td>${sec.name}</td>
-                        <td>${new Date(sec.created_at).toLocaleString()}</td>
-                    `;
-                    secretaryTableBody.appendChild(row);
-                });
-            })
-            .catch(err => console.error("FT listesi çekilirken hata:", err));
+  
+    async function loadSecretaries() {
+      try {
+        const res = await fetch("http://localhost:3000/secretaries");
+        if (!res.ok) throw await res.text();
+        const list = await res.json();
+        tbody.innerHTML = "";
+        list.forEach(sec => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${sec.id}</td>
+            <td>${sec.first_name}</td>
+            <td>${sec.phone}</td>
+            <td>${new Date(sec.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="edit-btn" data-id="${sec.id}">Düzenle</button>
+              <button class="delete-btn" data-id="${sec.id}">Sil</button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+        attachRowListeners();
+      } catch(err) {
+        console.error("Liste yükleme hatası:", err);
+      }
     }
-});
+  
+    function attachRowListeners() {
+      document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.id;
+          const newName = prompt("Yeni İsim Soyisim:");
+          const newPhone = prompt("Yeni Telefon:");
+          if (!newName || !newPhone) return;
+          try {
+            const res = await fetch(`http://localhost:3000/secretaries/${id}`, {
+              method: "PUT",
+              headers:{ "Content-Type":"application/json" },
+              body: JSON.stringify({ name: newName, phone: newPhone })
+            });
+            if (!res.ok) throw await res.text();
+            alert("Güncellendi");
+            loadSecretaries();
+          } catch(err) {
+            console.error(err);
+            alert("Güncellerken hata: " + err);
+          }
+        });
+      });
+  
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Silmek istediğine emin misin?")) return;
+          const id = btn.dataset.id;
+          try {
+            const res = await fetch(`http://localhost:3000/secretaries/${id}`, {
+              method: "DELETE"
+            });
+            if (!res.ok) throw await res.text();
+            alert("Silindi");
+            loadSecretaries();
+          } catch(err) {
+            console.error(err);
+            alert("Silme hatası: " + err);
+          }
+        });
+      });
+    }
+  });
+  

@@ -23,46 +23,73 @@ document.addEventListener("DOMContentLoaded", function() {
         const stepGoal = patientStepGoalInput.value.trim();
         const notes = patientNotesInput.value.trim();
 
-        // Eğer alanlar boşsa uyarı ver
         if (!name || !phone) {
-            alert("Lütfen tüm alanları doldurun!");
+            alert("Lütfen hasta adı ve telefon bilgilerini girin!");
             return;
         }
 
-        const newPatient = { name, phone, startDate, endDate, stepGoal, notes };
+        const newPatient = { 
+            name, 
+            phone, 
+            startDate, 
+            endDate, 
+            stepGoal, 
+            notes 
+        };
 
-        // Yeni hasta eklemek için POST isteği gönderiyoruz
         fetch("http://localhost:3000/patients", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify(newPatient),
         })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message || "Hasta başarıyla eklendi");
-                patientForm.reset(); // Formu sıfırla
-                loadPatients(); // Hasta listesi yenilensin
-            })
-            .catch((error) => console.error("Yeni hasta eklenirken hata:", error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Hasta başarıyla eklendi!");
+            patientForm.reset();
+            loadPatients();
+        })
+        .catch(error => {
+            console.error("Hata:", error);
+            alert("Hasta eklenirken bir hata oluştu: " + error.message);
+        });
     });
 
-    // Hasta listesini çekme fonksiyonu
+    // Hasta listesini yükleme fonksiyonu
     function loadPatients() {
         fetch("http://localhost:3000/patients")
-            .then((response) => response.json())
-            .then((data) => {
-                patientTableBody.innerHTML = "";
-                data.forEach((patient) => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${patient.id}</td>
-                        <td>${patient.first_name}</td>
-                        <td>${patient.phone}</td>
-                        <td>${new Date(patient.created_at).toLocaleString()}</td>
-                    `;
-                    patientTableBody.appendChild(row);
-                });
-            })
-            .catch((err) => console.error("Hasta listesi çekilirken hata:", err));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            patientTableBody.innerHTML = "";
+            data.forEach(patient => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.first_name || patient.name}</td>
+                    <td>${patient.phone}</td>
+                    <td>${patient.tedavi_baslangic || patient.startDate || 'Belirtilmedi'}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${patient.id}">Düzenle</button>
+                        <button class="delete-btn" data-id="${patient.id}">Sil</button>
+                    </td>
+                `;
+                patientTableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error("Hasta listesi yüklenirken hata:", error);
+            alert("Hasta listesi yüklenirken bir hata oluştu. Lütfen konsolu kontrol edin.");
+        });
     }
 });

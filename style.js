@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- Genel Yönlendirme İşlemleri ---
-    // Hemen Başla Butonu Yönlendirme
     const actionButtons = document.querySelectorAll('[data-action]');
     if (actionButtons) {
         actionButtons.forEach((button) => {
@@ -12,53 +11,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Hasta Girişi yönlendirme
     const hastaGirisLink = document.querySelector('.dropdown-content a[href="hasta-login.html"]');
     if (hastaGirisLink) {
         hastaGirisLink.addEventListener('click', (event) => {
             event.preventDefault();
-            window.location.href = "login.html"; // Hasta Girişi sayfasına yönlendir
+            window.location.href = "login.html";
         });
     }
 
-    // Sekreter Girişi yönlendirme
     const sekreterGirisLink = document.querySelector('.dropdown-content a[href="sekreter-login.html"]');
     if (sekreterGirisLink) {
         sekreterGirisLink.addEventListener('click', (event) => {
             event.preventDefault();
-            window.location.href = "sekreter-login.html"; // Sekreter Girişi sayfasına yönlendir
+            window.location.href = "sekreter-login.html";
         });
     }
 
-    // Admin Girişi yönlendirme
     const adminGirisLink = document.querySelector('.dropdown-content a[href="admin-login.html"]');
     if (adminGirisLink) {
         adminGirisLink.addEventListener('click', (event) => {
             event.preventDefault();
-            window.location.href = "admin-login.html"; // Admin Girişi sayfasına yönlendir
+            window.location.href = "admin-login.html";
         });
     }
 
     // --- Giriş (Login) İşlemleri ---
-    // Giriş sayfasına özgü elementler kontrol ediliyor
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         const loginButton = document.getElementById('login-button');
-        const registerButtonLogin = document.getElementById('register-button'); // Login sayfasında "Kayıt Ol" butonu
+        const registerButtonLogin = document.getElementById('register-button');
         const phoneInputLogin = document.getElementById('phone');
         const passwordInputLogin = document.getElementById('password');
         const phoneErrorLogin = document.getElementById('phone-error');
         const passwordErrorLogin = document.getElementById('password-error');
 
-        // Form submit işlemine müdahale
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
         });
 
-        // Giriş butonunun validasyonu
         if (loginButton) {
             loginButton.addEventListener('click', function() {
                 let valid = true;
+
                 if (!phoneInputLogin.value) {
                     phoneInputLogin.classList.add('error');
                     phoneErrorLogin.style.display = 'block';
@@ -67,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     phoneInputLogin.classList.remove('error');
                     phoneErrorLogin.style.display = 'none';
                 }
+
                 if (!passwordInputLogin.value) {
                     passwordInputLogin.classList.add('error');
                     passwordErrorLogin.style.display = 'block';
@@ -75,9 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     passwordInputLogin.classList.remove('error');
                     passwordErrorLogin.style.display = 'none';
                 }
+
                 if (valid) {
                     const phone = phoneInputLogin.value;
                     const password = passwordInputLogin.value;
+
                     fetch('http://localhost:3000/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -85,12 +82,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.role === 'secretary') {
-                            window.location.href = 'hasta-listesi.html'; 
-                        } else if (data.role === 'patient') {
-                            window.location.href = 'hasta-bilgilendirme.html'; 
-                        } else if (data.role === 'admin') {
-                            window.location.href = 'yonetimpaneli.html'; // Admin için yönlendirme
+                        if (!data.user) {
+                            alert('Geçersiz giriş!');
+                            return;
+                        }
+
+                        const role = data.user.role;
+
+                        if (role === 'secretary') {
+                            window.location.href = 'hasta-listesi.html';
+                        } else if (role === 'patient') {
+                            window.location.href = 'hasta-bilgilendirme.html';
+                        } else if (role === 'admin') {
+                            window.location.href = 'yonetimpaneli.html';
                         } else {
                             alert('Geçersiz giriş!');
                         }
@@ -100,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Login sayfasındaki kayıt ol butonu yönlendirme
         if (registerButtonLogin) {
             registerButtonLogin.addEventListener('click', function() {
                 window.location.href = 'register.html';
@@ -109,10 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Kayıt (Register) İşlemleri ---
-    // Kayıt sayfasına özgü elementleri kontrol ediyoruz
     const firstNameInput = document.getElementById('first-name');
-    if (firstNameInput) { // Eğer first-name varsa, kayıt sayfasındayız demektir.
-        const registerButtonRegister = document.getElementById('register-button'); // Kayıt sayfasında formu gönder butonu
+    if (firstNameInput) {
+        const registerButtonRegister = document.getElementById('register-button');
         const lastNameInput = document.getElementById('last-name');
         const phoneInputRegister = document.getElementById('phone');
         const passwordInputRegister = document.getElementById('password');
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const userData = {
                         phone: phoneInputRegister.value,
                         password: passwordInputRegister.value,
-                        role: "patient"  
+                        role: "patient"
                     };
 
                     fetch('http://localhost:3000/register', {
@@ -189,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(data => {
                         if (data.message === 'Kayıt başarılı') {
                             alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
-                            window.location.href = 'login.html'; 
+                            window.location.href = 'login.html';
                         } else {
                             alert('Kayıt başarısız! Tekrar deneyin.');
                         }
@@ -201,23 +203,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
-
-// Bilgilendirme Kısmı
-
+// --- Bilgilendirme Seçimi İşlemleri ---
 document.addEventListener('DOMContentLoaded', function() {
     const planVarButton = document.getElementById('plan-var');
     const planYokButton = document.getElementById('plan-yok');
 
     if (planVarButton) {
         planVarButton.addEventListener('click', function() {
-            window.location.href = 'plan-var.html'; // "Var" seçilirse bu sayfaya gider
+            window.location.href = 'plan-var.html';
         });
     }
 
     if (planYokButton) {
         planYokButton.addEventListener('click', function() {
-            window.location.href = 'plan-yok.html'; // "Yok" seçilirse bu sayfaya gider
+            window.location.href = 'plan-yok.html';
         });
     }
 });

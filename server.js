@@ -1,121 +1,205 @@
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+// Middleware’ler
+app.use(cors({
+  origin: [ 'http://localhost:5500', 'http://127.0.0.1:5500' ],
+  credentials: true
+}));
+app.use(express.json());
 
-// **MySQL Veritabanı Bağlantısı**
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Qaras.2002',
-    database: 'health_management_system'
+// MySQL bağlantı pool
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'Qaras.2002',
+  database: 'health_management_system',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('❌ Veritabanı bağlantı hatası:', err.stack);
-        return;
+// Tüm istekleri logla
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Kök route
+app.get('/', (req, res) => {
+  res.send('Health Management System API çalışıyor!');
+});
+
+/* ===================
+   AUTH (Kayıt & Giriş)
+   =================== */
+
+// Yeni kullanıcı (hasta veya sekreter) kaydı
+app.post('/register', async (req, res) => {
+  const { phone, password, role, name } = req.body;
+  if (!phone || !password || !role || !name) {
+    return res.status(400).json({ error: 'Telefon, şifre, rol ve isim gereklidir' });
+  }
+  if (!['patient','secretary','admin'].includes(role)) {
+    return res.status(400).json({ error: 'Geçersiz rol' });
+  }
+
+  try {
+    const hashed = await bcrypt.hash(password, 10);
+    const [result] = await pool.query(`
+      INSERT INTO users (phone, password, role, first_name)
+      VALUES (?, ?, ?, ?)
+    `, [phone, hashed, role, name]);
+
+    res.json({ message: 'Kayıt başarılı', id: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Kayıt yapılamadı' });
+  }
+});
+
+// Giriş (login)
+app.post('/login', async (req, res) => {
+  const { phone, password } = req.body;
+  if (!phone || !password) {
+    return res.status(400).json({ error: 'Telefon ve şifre gereklidir' });
+  }
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, phone, password, role, first_name
+      FROM users WHERE phone = ? LIMIT 1
+    `, [phone]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'Kullanıcı bulunamadı' });
     }
-    console.log('✅ Veritabanına bağlandı.');
-});
-
-// **Hasta Listesini Getir (GET /patients)**
-app.get('/patients', (req, res) => {
-    const query = 'SELECT id, phone, role, first_name, created_at FROM users WHERE role = "patient"';
-    db.query(query, (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Hasta listesi alınırken hata oluştu' });
-        }
-        res.status(200).json(results);
-    });
-});
-
-
-// **Yeni Hasta Ekleme (POST /patients)**
-app.post('/patients', (req, res) => {
-    const { name, phone } = req.body;
-
-    if (!name || !phone) {
-        return res.status(400).json({ message: 'Ad ve telefon gereklidir!' });
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: 'Şifre yanlış' });
     }
 
-    const query = 'INSERT INTO users (phone, password, role, first_name) VALUES (?, ?, ?, ?)';
-    db.query(query, [phone, bcrypt.hashSync('123456', 10), "patient", name], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Hasta eklenemedi', error: err });
-        }
-        res.status(200).json({ message: 'Hasta başarıyla eklendi', userId: result.insertId });
+    // Giriş başarılı
+    res.json({
+      message: 'Giriş başarılı',
+      user: {
+        id: user.id,
+        role: user.role,
+        first_name: user.first_name
+      }
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Sunucu hatası' });
+  }
 });
 
+/* ============================
+   HASTA (patients) işlemleri
+   ============================ */
 
-
-// **Hasta Silme (DELETE /patients/:id)**
-app.delete('/patients/:id', (req, res) => {
-    const userId = req.params.id;
-    const query = 'DELETE FROM users WHERE id = ?';
-
-    db.query(query, [userId], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Hasta silinirken hata oluştu' });
-        }
-        res.status(200).json({ message: 'Hasta başarıyla silindi' });
-    });
+app.get('/patients', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, phone, first_name,
+             tedavi_baslangic AS startDate,
+             tedavi_bitis    AS endDate,
+             haftalik_adim   AS stepGoal,
+             notlar          AS notes
+      FROM users WHERE role = 'patient'
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Sunucu hatası' });
+  }
 });
 
-// **Sekreter Listesini Getir (GET /secretaries)**
-app.get('/secretaries', (req, res) => {
-    const query = 'SELECT id, phone, role, first_name, created_at FROM users WHERE role = "secretary"';
-    db.query(query, (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Sekreter listesi alınırken hata oluştu' });
-        }
-        res.status(200).json(results);
-    });
+app.post('/patients', async (req, res) => {
+  const { name, phone, startDate, endDate, stepGoal, notes } = req.body;
+  if (!name || !phone) {
+    return res.status(400).json({ error: 'Ad ve telefon gereklidir' });
+  }
+  try {
+    const hashed = await bcrypt.hash('123456', 10);
+    const [result] = await pool.query(`
+      INSERT INTO users
+      (phone, password, role, first_name, tedavi_baslangic, tedavi_bitis, haftalik_adim, notlar)
+      VALUES (?, ?, 'patient', ?, ?, ?, ?, ?)
+    `, [phone, hashed, name, startDate, endDate, stepGoal, notes]);
+    res.json({ message: 'Hasta başarıyla eklendi', id: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Hasta eklenemedi' });
+  }
 });
 
-// **Yeni Sekreter Ekleme (POST /secretaries)**
-app.post('/secretaries', (req, res) => {
-    const {phone, password } = req.body;
-    
-    if (!phone || !password) {
-        return res.status(400).json({ message: 'Ad, telefon ve şifre gereklidir!' });
-    }
-    
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const query = 'INSERT INTO users (phone, password, role, first_name) VALUES (?, ?, ?, ?)';
-    db.query(query, [phone, hashedPassword, "secretary", name], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Sekreter eklenemedi', error: err });
-        }
-        res.status(200).json({ message: 'Sekreter başarıyla eklendi', userId: result.insertId });
-    });
+/* ==============================
+   SEKRETER (secretaries) işlemleri
+   ============================== */
+
+app.get('/secretaries', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, phone, first_name
+      FROM users WHERE role = 'secretary'
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Sunucu hatası' });
+  }
 });
 
-// **Sekreter Silme (DELETE /secretaries/:id)**
-app.delete('/secretaries/:id', (req, res) => {
-    const userId = req.params.id;
-    const query = 'DELETE FROM users WHERE id = ? AND role = "secretary"';
-    
-    db.query(query, [userId], (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Sekreter silinirken hata oluştu', error: err });
-        }
-        res.status(200).json({ message: 'Sekreter başarıyla silindi' });
-    });
+app.post('/secretaries', async (req, res) => {
+  const { name, phone } = req.body;
+  if (!name || !phone) {
+    return res.status(400).json({ error: 'Ad ve telefon gereklidir' });
+  }
+  try {
+    const hashed = await bcrypt.hash('123456', 10);
+    const [result] = await pool.query(`
+      INSERT INTO users
+      (phone, password, role, first_name)
+      VALUES (?, ?, 'secretary', ?)
+    `, [phone, hashed, name]);
+    res.json({ message: 'Sekreter başarıyla eklendi', id: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Sekreter eklenemedi' });
+  }
 });
 
+/* ==============================
+   404 ve Hata Yönetimi
+   ============================== */
 
-// **Sunucuyu Başlat**
-app.listen(port, () => {
-    console.log(`🚀 Sunucu http://localhost:${port} adresinde çalışıyor`);
+app.use((req, res) => {
+  res.status(404).send('Sayfa bulunamadı');
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Bir hata oluştu!');
+});
+
+/* ==============================
+   Sunucu Başlatma
+   ============================== */
+
+const server = app.listen(port, () => {
+  console.log(`🚀 Sunucu http://localhost:${port} adresinde çalışıyor`);
+});
+
+process.on('SIGINT', () => {
+  console.log('Sunucu kapatılıyor...');
+  server.close(() => {
+    console.log('Sunucu başarıyla kapatıldı');
+    process.exit(0);
+  });
+});
