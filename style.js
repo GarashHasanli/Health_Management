@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Genel Giriş Sayfası Yönlendirmeleri ---
+    // --- "Hemen Başla" butonları yönlendirmesi ---
     document.querySelectorAll('[data-action="start"]').forEach(button => {
         button.addEventListener('click', () => {
             window.location.href = './login.html';
         });
     });
 
+    // --- Menü Link Yönlendirme ---
     const redirectLinks = {
-        'hasta-login.html': 'hasta-login.html',
-        'sekreter-login.html': 'sekreter-login.html',
-        'admin-login.html': 'admin-login.html'
+        'login.html': 'login.html',
+        'sekreter-login.html': 'sekreter-login.html'
     };
 
     Object.entries(redirectLinks).forEach(([href, url]) => {
@@ -25,18 +25,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Rol Belirleme ---
     let role = null;
     const pageTitle = document.title.toLowerCase();
-    if (pageTitle.includes('hasta')) role = 'patient';
+    if (pageTitle.includes('kayıt') || pageTitle.includes('register')) role = 'patient';
     else if (pageTitle.includes('sekreter')) role = 'secretary';
     else if (pageTitle.includes('admin')) role = 'admin';
+    else if (pageTitle.includes('giriş') || pageTitle.includes('login')) role = 'patient';
 
-    // --- Login İşlemleri ---
+    // --- Login ---
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         const phoneInput = document.getElementById('phone');
         const passwordInput = document.getElementById('password') || document.getElementById('otp');
         const loginButton = document.getElementById('login-button');
         const registerButton = document.getElementById('register-button');
-
         const phoneError = document.getElementById('phone-error');
         const passwordError = document.getElementById('password-error');
 
@@ -79,14 +79,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     role
                 })
             })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.user) {
-                    alert(data.error || 'Geçersiz giriş!');
-                    return;
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => { throw new Error(data.error || res.statusText); });
                 }
-
+                return res.json();
+            })
+            .then(data => {
                 const userRole = data.user.role;
+
                 if (userRole === 'secretary') {
                     window.location.href = 'hasta-listesi.html';
                 } else if (userRole === 'patient') {
@@ -99,18 +100,18 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(err => {
                 console.error('Login Error:', err);
-                alert('Giriş sırasında hata oluştu.');
+                alert(err.message || 'Giriş sırasında hata oluştu.');
             });
         });
 
-        registerButton.addEventListener('click', () => {
-            if (role === 'patient') window.location.href = 'register.html';
-            else if (role === 'secretary') window.location.href = 'sekreter-register.html';
-            else window.location.href = 'register.html';
-        });
+        if (registerButton) {
+            registerButton.addEventListener('click', () => {
+                window.location.href = 'register.html';
+            });
+        }
     }
 
-    // --- Register İşlemleri ---
+    // --- Register ---
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         const firstName = document.getElementById('first-name');
@@ -184,8 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    firstName: firstName.value.trim(),
-                    lastName: lastName.value.trim(),
+                    first_name: firstName.value.trim(),
+                    last_name: lastName.value.trim(),
                     phone: phone.value.trim(),
                     password: password.value,
                     role: 'patient'
@@ -195,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.message === 'Kayıt başarılı') {
                     alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
-                    window.location.href = 'hasta-login.html';
+                    window.location.href = 'login.html';
                 } else {
                     alert(data.error || 'Kayıt başarısız!');
                 }
@@ -207,15 +208,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Bilgilendirme Seçimi ---
+    // --- Bilgilendirme Yönlendirme ---
     const planVarBtn = document.getElementById('plan-var');
     const planYokBtn = document.getElementById('plan-yok');
 
-    if (planVarBtn) planVarBtn.addEventListener('click', () => {
-        window.location.href = 'plan-var.html';
-    });
+    if (planVarBtn) {
+        planVarBtn.addEventListener('click', () => {
+            window.location.href = 'plan-var.html';
+        });
+    }
 
-    if (planYokBtn) planYokBtn.addEventListener('click', () => {
-        window.location.href = 'plan-yok.html';
-    });
+    if (planYokBtn) {
+        planYokBtn.addEventListener('click', () => {
+            window.location.href = 'plan-yok.html';
+        });
+    }
 });
