@@ -15,6 +15,7 @@
 </head>
 <body>
   <div class="sidebar">
+    <h2>Yönetim Paneli</h2>
     <ul class="nav">
       <li class="nav-item active"><a href="javascript:void(0)">FT Listesi + Yeni FT Ekleme</a></li>
       <li class="nav-item"><a href="hastalistesi.html">Hasta Listesi</a></li>
@@ -27,6 +28,30 @@
     <h1>Yönetim Paneli</h1>
     <h2>FT Listesi + Yeni FT Ekleme</h2>
 
+    <!-- Yeni FT Ekleme Formu -->
+    <div class="ft-ekle">
+      <h3>Yeni FT Ekle</h3>
+      <form id="ft-form">
+        <div class="form-group">
+          <label for="ft-name">İsim:</label>
+          <input type="text" id="ft-name" name="first_name" placeholder="İsim" required />
+        </div>
+        <div class="form-group">
+          <label for="ft-surname">Soyisim:</label>
+          <input type="text" id="ft-surname" name="last_name" placeholder="Soyisim" required />
+        </div>
+        <div class="form-group">
+          <label for="ft-phone"><i class="fa-solid fa-phone"></i> Telefon Numarası:</label>
+          <input type="tel" id="ft-phone" name="phone" placeholder="0 (5XX) XXX XX XX" required />
+        </div>
+        <div class="form-group">
+          <label for="ft-password"><i class="fa-solid fa-lock"></i> Şifre:</label>
+          <input type="password" id="ft-password" name="password" placeholder="Şifre" required />
+        </div>
+        <button type="submit" id="ft-ekle-btn">FT Ekle</button>
+      </form>
+    </div>
+
     <!-- FT Listesi Tablosu -->
     <div class="ft-list">
       <h3>Mevcut FT Listesi</h3>
@@ -34,7 +59,8 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>İsim Soyisim</th>
+            <th>İsim</th>
+            <th>Soyisim</th>
             <th>Telefon</th>
             <th>Kayıt Tarihi</th>
             <th>İşlemler</th>
@@ -44,22 +70,6 @@
           <!-- JS ile doldurulacak -->
         </tbody>
       </table>
-    </div>
-
-    <!-- Yeni FT Ekleme Formu -->
-    <div class="ft-ekle">
-      <h3>Yeni FT Ekle</h3>
-      <form id="ft-form">
-        <div class="form-group">
-          <label for="ft-name">İsim Soyisim:</label>
-          <input type="text" id="ft-name" name="name" placeholder="Ad Soyad" required />
-        </div>
-        <div class="form-group">
-          <label for="ft-phone"><i class="fa-solid fa-phone"></i> Telefon Numarası:</label>
-          <input type="tel" id="ft-phone" name="phone" placeholder="0 (5XX) XXX XX XX" required />
-        </div>
-        <button type="submit" id="ft-ekle-btn">FT Ekle</button>
-      </form>
     </div>
   </div>
 

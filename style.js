@@ -1,222 +1,221 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // --- Genel Yönlendirme İşlemleri ---
-    const actionButtons = document.querySelectorAll('[data-action]');
-    if (actionButtons) {
-        actionButtons.forEach((button) => {
-            if (button.getAttribute('data-action') === 'start') {
-                button.addEventListener('click', () => {
-                    window.location.href = './login.html';
-                });
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Genel Giriş Sayfası Yönlendirmeleri ---
+    document.querySelectorAll('[data-action="start"]').forEach(button => {
+        button.addEventListener('click', () => {
+            window.location.href = './login.html';
         });
-    }
+    });
 
-    const hastaGirisLink = document.querySelector('.dropdown-content a[href="hasta-login.html"]');
-    if (hastaGirisLink) {
-        hastaGirisLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            window.location.href = "login.html";
-        });
-    }
+    const redirectLinks = {
+        'hasta-login.html': 'hasta-login.html',
+        'sekreter-login.html': 'sekreter-login.html',
+        'admin-login.html': 'admin-login.html'
+    };
 
-    const sekreterGirisLink = document.querySelector('.dropdown-content a[href="sekreter-login.html"]');
-    if (sekreterGirisLink) {
-        sekreterGirisLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            window.location.href = "sekreter-login.html";
-        });
-    }
+    Object.entries(redirectLinks).forEach(([href, url]) => {
+        const link = document.querySelector(`.dropdown-content a[href="${href}"]`);
+        if (link) {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                window.location.href = url;
+            });
+        }
+    });
 
-    const adminGirisLink = document.querySelector('.dropdown-content a[href="admin-login.html"]');
-    if (adminGirisLink) {
-        adminGirisLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            window.location.href = "admin-login.html";
-        });
-    }
+    // --- Rol Belirleme ---
+    let role = null;
+    const pageTitle = document.title.toLowerCase();
+    if (pageTitle.includes('hasta')) role = 'patient';
+    else if (pageTitle.includes('sekreter')) role = 'secretary';
+    else if (pageTitle.includes('admin')) role = 'admin';
 
-    // --- Giriş (Login) İşlemleri ---
+    // --- Login İşlemleri ---
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
+        const phoneInput = document.getElementById('phone');
+        const passwordInput = document.getElementById('password') || document.getElementById('otp');
         const loginButton = document.getElementById('login-button');
-        const registerButtonLogin = document.getElementById('register-button');
-        const phoneInputLogin = document.getElementById('phone');
-        const passwordInputLogin = document.getElementById('password');
-        const phoneErrorLogin = document.getElementById('phone-error');
-        const passwordErrorLogin = document.getElementById('password-error');
+        const registerButton = document.getElementById('register-button');
 
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        const phoneError = document.getElementById('phone-error');
+        const passwordError = document.getElementById('password-error');
+
+        loginForm.addEventListener('submit', e => e.preventDefault());
+
+        loginButton.addEventListener('click', () => {
+            let valid = true;
+
+            if (!phoneInput.value.trim()) {
+                phoneInput.classList.add('error');
+                phoneError.style.display = 'block';
+                valid = false;
+            } else {
+                phoneInput.classList.remove('error');
+                phoneError.style.display = 'none';
+            }
+
+            if (!passwordInput.value.trim()) {
+                passwordInput.classList.add('error');
+                passwordError.style.display = 'block';
+                valid = false;
+            } else {
+                passwordInput.classList.remove('error');
+                passwordError.style.display = 'none';
+            }
+
+            if (!role) {
+                alert('Sayfa rolü belirlenemedi!');
+                return;
+            }
+
+            if (!valid) return;
+
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: phoneInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                    role
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.user) {
+                    alert(data.error || 'Geçersiz giriş!');
+                    return;
+                }
+
+                const userRole = data.user.role;
+                if (userRole === 'secretary') {
+                    window.location.href = 'hasta-listesi.html';
+                } else if (userRole === 'patient') {
+                    window.location.href = 'hasta-bilgilendirme.html';
+                } else if (userRole === 'admin') {
+                    window.location.href = 'yonetimpaneli.html';
+                } else {
+                    alert('Bilinmeyen rol!');
+                }
+            })
+            .catch(err => {
+                console.error('Login Error:', err);
+                alert('Giriş sırasında hata oluştu.');
+            });
         });
 
-        if (loginButton) {
-            loginButton.addEventListener('click', function() {
-                let valid = true;
-
-                if (!phoneInputLogin.value) {
-                    phoneInputLogin.classList.add('error');
-                    phoneErrorLogin.style.display = 'block';
-                    valid = false;
-                } else {
-                    phoneInputLogin.classList.remove('error');
-                    phoneErrorLogin.style.display = 'none';
-                }
-
-                if (!passwordInputLogin.value) {
-                    passwordInputLogin.classList.add('error');
-                    passwordErrorLogin.style.display = 'block';
-                    valid = false;
-                } else {
-                    passwordInputLogin.classList.remove('error');
-                    passwordErrorLogin.style.display = 'none';
-                }
-
-                if (valid) {
-                    const phone = phoneInputLogin.value;
-                    const password = passwordInputLogin.value;
-
-                    fetch('http://localhost:3000/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ phone, password })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.user) {
-                            alert('Geçersiz giriş!');
-                            return;
-                        }
-
-                        const role = data.user.role;
-
-                        if (role === 'secretary') {
-                            window.location.href = 'hasta-listesi.html';
-                        } else if (role === 'patient') {
-                            window.location.href = 'hasta-bilgilendirme.html';
-                        } else if (role === 'admin') {
-                            window.location.href = 'yonetimpaneli.html';
-                        } else {
-                            alert('Geçersiz giriş!');
-                        }
-                    })
-                    .catch(error => console.log('Hata:', error));
-                }
-            });
-        }
-
-        if (registerButtonLogin) {
-            registerButtonLogin.addEventListener('click', function() {
-                window.location.href = 'register.html';
-            });
-        }
-    }
-
-    // --- Kayıt (Register) İşlemleri ---
-    const firstNameInput = document.getElementById('first-name');
-    if (firstNameInput) {
-        const registerButtonRegister = document.getElementById('register-button');
-        const lastNameInput = document.getElementById('last-name');
-        const phoneInputRegister = document.getElementById('phone');
-        const passwordInputRegister = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
-
-        const firstNameError = document.getElementById('first-name-error');
-        const lastNameError = document.getElementById('last-name-error');
-        const phoneErrorRegister = document.getElementById('phone-error');
-        const passwordErrorRegister = document.getElementById('password-error');
-        const confirmPasswordError = document.getElementById('confirm-password-error');
-
-        if (registerButtonRegister) {
-            registerButtonRegister.addEventListener('click', function() {
-                let valid = true;
-
-                if (!firstNameInput.value) {
-                    firstNameInput.classList.add('error');
-                    firstNameError.style.display = 'block';
-                    valid = false;
-                } else {
-                    firstNameInput.classList.remove('error');
-                    firstNameError.style.display = 'none';
-                }
-
-                if (!lastNameInput.value) {
-                    lastNameInput.classList.add('error');
-                    lastNameError.style.display = 'block';
-                    valid = false;
-                } else {
-                    lastNameInput.classList.remove('error');
-                    lastNameError.style.display = 'none';
-                }
-
-                if (!phoneInputRegister.value) {
-                    phoneInputRegister.classList.add('error');
-                    phoneErrorRegister.style.display = 'block';
-                    valid = false;
-                } else {
-                    phoneInputRegister.classList.remove('error');
-                    phoneErrorRegister.style.display = 'none';
-                }
-
-                if (!passwordInputRegister.value) {
-                    passwordInputRegister.classList.add('error');
-                    passwordErrorRegister.style.display = 'block';
-                    valid = false;
-                } else {
-                    passwordInputRegister.classList.remove('error');
-                    passwordErrorRegister.style.display = 'none';
-                }
-
-                if (passwordInputRegister.value !== confirmPasswordInput.value) {
-                    confirmPasswordInput.classList.add('error');
-                    confirmPasswordError.style.display = 'block';
-                    valid = false;
-                } else {
-                    confirmPasswordInput.classList.remove('error');
-                    confirmPasswordError.style.display = 'none';
-                }
-
-                if (valid) {
-                    const userData = {
-                        phone: phoneInputRegister.value,
-                        password: passwordInputRegister.value,
-                        role: "patient"
-                    };
-
-                    fetch('http://localhost:3000/register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userData)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === 'Kayıt başarılı') {
-                            alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
-                            window.location.href = 'login.html';
-                        } else {
-                            alert('Kayıt başarısız! Tekrar deneyin.');
-                        }
-                    })
-                    .catch(error => console.log('Hata:', error));
-                }
-            });
-        }
-    }
-});
-
-// --- Bilgilendirme Seçimi İşlemleri ---
-document.addEventListener('DOMContentLoaded', function() {
-    const planVarButton = document.getElementById('plan-var');
-    const planYokButton = document.getElementById('plan-yok');
-
-    if (planVarButton) {
-        planVarButton.addEventListener('click', function() {
-            window.location.href = 'plan-var.html';
+        registerButton.addEventListener('click', () => {
+            if (role === 'patient') window.location.href = 'register.html';
+            else if (role === 'secretary') window.location.href = 'sekreter-register.html';
+            else window.location.href = 'register.html';
         });
     }
 
-    if (planYokButton) {
-        planYokButton.addEventListener('click', function() {
-            window.location.href = 'plan-yok.html';
+    // --- Register İşlemleri ---
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        const firstName = document.getElementById('first-name');
+        const lastName = document.getElementById('last-name');
+        const phone = document.getElementById('phone');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm-password');
+        const registerButton = document.getElementById('register-button');
+
+        const errors = {
+            firstName: document.getElementById('first-name-error'),
+            lastName: document.getElementById('last-name-error'),
+            phone: document.getElementById('phone-error'),
+            password: document.getElementById('password-error'),
+            confirmPassword: document.getElementById('confirm-password-error')
+        };
+
+        registerForm.addEventListener('submit', e => e.preventDefault());
+
+        registerButton.addEventListener('click', () => {
+            let valid = true;
+
+            if (!firstName.value.trim()) {
+                firstName.classList.add('error');
+                errors.firstName.style.display = 'block';
+                valid = false;
+            } else {
+                firstName.classList.remove('error');
+                errors.firstName.style.display = 'none';
+            }
+
+            if (!lastName.value.trim()) {
+                lastName.classList.add('error');
+                errors.lastName.style.display = 'block';
+                valid = false;
+            } else {
+                lastName.classList.remove('error');
+                errors.lastName.style.display = 'none';
+            }
+
+            if (!phone.value.trim()) {
+                phone.classList.add('error');
+                errors.phone.style.display = 'block';
+                valid = false;
+            } else {
+                phone.classList.remove('error');
+                errors.phone.style.display = 'none';
+            }
+
+            if (!password.value) {
+                password.classList.add('error');
+                errors.password.style.display = 'block';
+                valid = false;
+            } else {
+                password.classList.remove('error');
+                errors.password.style.display = 'none';
+            }
+
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.classList.add('error');
+                errors.confirmPassword.style.display = 'block';
+                valid = false;
+            } else {
+                confirmPassword.classList.remove('error');
+                errors.confirmPassword.style.display = 'none';
+            }
+
+            if (!valid) return;
+
+            fetch('http://localhost:3000/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    firstName: firstName.value.trim(),
+                    lastName: lastName.value.trim(),
+                    phone: phone.value.trim(),
+                    password: password.value,
+                    role: 'patient'
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message === 'Kayıt başarılı') {
+                    alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
+                    window.location.href = 'hasta-login.html';
+                } else {
+                    alert(data.error || 'Kayıt başarısız!');
+                }
+            })
+            .catch(err => {
+                console.error('Register Error:', err);
+                alert('Kayıt sırasında hata oluştu.');
+            });
         });
     }
+
+    // --- Bilgilendirme Seçimi ---
+    const planVarBtn = document.getElementById('plan-var');
+    const planYokBtn = document.getElementById('plan-yok');
+
+    if (planVarBtn) planVarBtn.addEventListener('click', () => {
+        window.location.href = 'plan-var.html';
+    });
+
+    if (planYokBtn) planYokBtn.addEventListener('click', () => {
+        window.location.href = 'plan-yok.html';
+    });
 });

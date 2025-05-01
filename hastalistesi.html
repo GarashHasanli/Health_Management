@@ -1,73 +1,88 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasta Listesi</title>
-    <link rel="stylesheet" href="yonetimpaneli.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hasta Listesi</title>
+  <link rel="stylesheet" href="yonetimpaneli.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
 </head>
 <body>
-    <!-- Sidebar Menü -->
-    <div class="sidebar">
-        <h2>Yönetim Paneli</h2>
-        <ul class="nav">
-            <li class="nav-item"><a href="yonetimpaneli.html">FT Listesi</a></li>
-            <li class="nav-item active"><a href="hastalistesi.html">Hasta Listesi</a></li>
-            <li class="nav-item"><a href="raporlar.html">Raporlar</a></li>
-            <li class="nav-item"><a href="bildirim.html">Bildirimler</a></li>
-        </ul>
+  <!-- Sidebar Menü -->
+  <div class="sidebar">
+    <h2>Yönetim Paneli</h2>
+    <ul class="nav">
+      <li class="nav-item"><a href="yonetimpaneli.html">FT Listesi</a></li>
+      <li class="nav-item active"><a href="hastalistesi.html">Hasta Listesi</a></li>
+      <li class="nav-item"><a href="raporlar.html">Raporlar</a></li>
+      <li class="nav-item"><a href="bildirim.html">Bildirimler</a></li>
+    </ul>
+  </div>
+
+  <!-- İçerik Alanı -->
+  <div class="content">
+    <h1>Hasta Listesi ve Tedavi Planları</h1>
+
+    <!-- Yeni Hasta Ekleme Formu (arka plan divi kaldırıldı) -->
+    <h3>Yeni Hasta Ekle</h3>
+    <form id="hasta-form">
+      <div class="form-group">
+        <label for="hasta-ad">İsim:</label>
+        <input type="text" id="hasta-ad" name="first_name" placeholder="İsim" required />
+      </div>
+      <div class="form-group">
+        <label for="hasta-soyad">Soyisim:</label>
+        <input type="text" id="hasta-soyad" name="last_name" placeholder="Soyisim" required />
+      </div>
+      <div class="form-group">
+        <label for="hasta-telefon"><i class="fa-solid fa-phone"></i> Telefon:</label>
+        <input type="tel" id="hasta-telefon" name="phone" placeholder="0 (5XX) XXX XX XX" required />
+      </div>
+      <div class="form-group">
+        <label for="hasta-sifre"><i class="fa-solid fa-lock"></i> Şifre:</label>
+        <input type="password" id="hasta-sifre" name="password" placeholder="Şifre" required />
+      </div>
+      <div class="form-group">
+        <label for="tedavi-baslangic">Tedavi Başlangıç:</label>
+        <input type="date" id="tedavi-baslangic" name="treatment_start" required />
+      </div>
+      <div class="form-group">
+        <label for="tedavi-bitis">Tedavi Bitiş:</label>
+        <input type="date" id="tedavi-bitis" name="treatment_end" required />
+      </div>
+      <div class="form-group">
+        <label for="haftalik-adim">Haftalık Adım Hedefi:</label>
+        <input type="number" id="haftalik-adim" name="weekly_step_goal" required />
+      </div>
+      <div class="form-group">
+        <label for="notlar">Özel Notlar:</label>
+        <textarea id="notlar" name="notes" rows="3"></textarea>
+      </div>
+      <button type="submit" id="hasta-ekle-btn">Hasta Ekle</button>
+    </form>
+
+    <!-- Hasta Listesi Tablosu -->
+    <div class="hasta-listesi">
+      <h3>Mevcut Hastalar</h3>
+      <table id="hasta-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>İsim</th>
+            <th>Soyisim</th>
+            <th>Telefon</th>
+            <th>Tedavi Başlangıç</th>
+            <th>Tedavi Bitiş Süresi</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS ile doldurulacak -->
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <!-- İçerik Alanı -->
-    <div class="content">
-        <h1>Hasta Listesi ve Tedavi Planları</h1>
-
-        <!-- Hasta Listesi Tablosu -->
-        <div class="hasta-listesi">
-            <h3>Mevcut Hastalar</h3>
-            <table id="hasta-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>İsim</th>
-                        <th>Telefon</th>
-                        <th>Tedavi Başlangıç</th>
-                        <th>İşlem</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- JS ile doldurulacak -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Yeni Hasta Ekleme Formu -->
-        <div class="hasta-ekle">
-            <h3>Yeni Hasta Ekle</h3>
-            <form id="hasta-form">
-                <label for="hasta-ad">Adı Soyadı:</label>
-                <input type="text" id="hasta-ad" required>
-
-                <label for="hasta-telefon">Telefon:</label>
-                <input type="tel" id="hasta-telefon" required>
-
-                <label for="tedavi-baslangic">Tedavi Başlangıç:</label>
-                <input type="date" id="tedavi-baslangic" required>
-
-                <label for="tedavi-bitis">Tedavi Bitiş:</label>
-                <input type="date" id="tedavi-bitis" required>
-
-                <label for="haftalik-adim">Haftalık Adım Hedefi:</label>
-                <input type="number" id="haftalik-adim" required>
-
-                <label for="notlar">Özel Notlar:</label>
-                <textarea id="notlar" rows="3"></textarea>
-
-                <button type="submit">Hasta Ekle</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="hastalistesi.js"></script>
+  <script src="hastalistesi.js"></script>
 </body>
 </html>

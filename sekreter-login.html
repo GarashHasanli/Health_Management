@@ -19,7 +19,7 @@
         <div class="dropdown">
             <a href="login.html" class="active"><i class="fa-solid fa-right-to-bracket"></i> Giriş</a>
             <div class="dropdown-content">
-                <a href="hasta-login.html">Hasta Girişi</a>
+                <a href="login.html">Hasta Girişi</a>
                 <a href="sekreter-login.html">Sekreter + FT Girişi</a>
             </div>
         </div>
@@ -36,6 +36,9 @@
             <label for="otp">Şifre:</label>
             <input type="password" id="otp" name="otp" placeholder="*******" required>
             <div class="error-message" id="otp-error">Bu alan boş bırakılmamalıdır.</div>
+
+            <!-- Hata almamak için bu satırı ekliyoruz -->
+            <div class="error-message" id="password-error" style="display: none;">Bu alan boş bırakılmamalıdır.</div>
 
             <button type="button" id="login-button">Giriş Yap</button>
             <button type="button" id="register-button">Kayıt Ol</button>
