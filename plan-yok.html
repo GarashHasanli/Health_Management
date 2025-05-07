@@ -1,43 +1,156 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Önceki Tedavi Planlarım</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body id="hasta-tedavi-body">
-    <div id="hasta-tedavi-container">
-        <!-- Sabit Mesaj -->
-        <div id="tedavi-sabit-mesaj">
-            <p>Bu alanda önceki tedavi planlarınızı görüntüleyebilirsiniz. Eğer bir tedavi planı görünmüyorsa, lütfen doktor veya sekreterle iletişime geçiniz.</p>
-        </div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Önceki Tedavi Planlarım</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+      color: #333;
+    }
 
-        <!-- Tedavi Planları Tablosu -->
-        <div id="tedavi-planlari">
-            <h1 id="tedavi-baslik">Önceki Tedavi Planlarım</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tarih</th>
-                        <th>Tedavi Adı</th>
-                        <th>Durum</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>01/12/2024</td>
-                        <td>Fizik Tedavi</td>
-                        <td>Tamamlandı</td>
-                    </tr>
-                    <tr>
-                        <td>15/11/2024</td>
-                        <td>Rehabilitasyon</td>
-                        <td>Devam Ediyor</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .info-box {
+      background-color: #dff0f8;
+      color: #055160;
+      border-left: 5px solid #0d6efd;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #0a7da1;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: #0a7da1;
+      color: white;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background-color: #eef6f9;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tbody td {
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+      }
+
+      tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+        color: #0a7da1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Bilgilendirme Mesajı -->
+    <div class="info-box">
+      Bu alanda önceki tedavi planlarınızı görüntüleyebilirsiniz. Eğer bir tedavi planı görünmüyorsa, lütfen doktor veya sekreterle iletişime geçiniz.
     </div>
+
+    <!-- Tedavi Planları -->
+    <h1>Önceki Tedavi Planlarım</h1>
+    <table id="tedavi-tablosu">
+      <thead>
+        <tr>
+          <th>Başlangıç Tarihi</th>
+          <th>Bitiş Tarihi</th>
+          <th>Durum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- JS ile doldurulacak -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const userId = localStorage.getItem("userId"); // Giriş yapan hasta ID'si burada tutulmalı
+      if (!userId) return alert("Hasta bilgisi bulunamadı.");
+
+      fetch(`http://localhost:3000/patients/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector("#tedavi-tablosu tbody");
+
+          const start = data.treatment_start ? new Date(data.treatment_start).toLocaleDateString("tr-TR") : "-";
+          const end = data.treatment_end ? new Date(data.treatment_end).toLocaleDateString("tr-TR") : "-";
+
+          let durum = "-";
+          if (data.treatment_start && data.treatment_end) {
+            const bitis = new Date(data.treatment_end);
+            const bugun = new Date();
+            durum = bitis < bugun ? "Tamamlandı" : "Devam Ediyor";
+          }
+
+          const row = `
+            <tr>
+              <td data-label="Başlangıç">${start}</td>
+              <td data-label="Bitiş">${end}</td>
+              <td data-label="Durum">${durum}</td>
+            </tr>
+          `;
+          tbody.innerHTML = row;
+        })
+        .catch(err => {
+          console.error("Tedavi planı alınamadı:", err);
+          alert("Tedavi planı verisi alınırken bir hata oluştu.");
+        });
+    });
+  </script>
 </body>
 </html>

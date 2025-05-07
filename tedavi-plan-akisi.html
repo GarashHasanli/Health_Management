@@ -1,68 +1,180 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tedavi Planı Akışı</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tedavi Planı Akışı</title>
+  <style>
+    /* Temel Stil Ayarları */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: #f4f6f8;
+    }
+
+    /* Navigasyon Menüsü */
+    nav {
+      width: 250px;
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    nav h1 {
+      font-size: 1.5em;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    nav ul {
+      list-style: none;
+    }
+
+    nav ul li {
+      margin-bottom: 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 1em;
+      display: block;
+      padding: 10px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    nav ul li a:hover {
+      background: #34495e;
+    }
+
+    /* Ana İçerik Alanı */
+    main {
+      margin-left: 250px;
+      padding: 40px;
+      flex: 1;
+    }
+
+    section {
+      margin-bottom: 50px;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    section h2 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    /* Günlük Adım Alanı */
+    #gunluk-adim input {
+      padding: 10px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #gunluk-adim button {
+      padding: 10px 20px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #gunluk-adim button:hover {
+      background: #219150;
+    }
+
+    /* Diğer Alanlar */
+    .content-placeholder {
+      color: #7f8c8d;
+    }
+
+    /* Responsive Tasarım */
+    @media (max-width: 768px) {
+      nav {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      main {
+        margin-left: 0;
+      }
+    }
+  </style>
 </head>
-<body id="tedavi-plan-body">
+<body>
 
-    <nav id="navbar">
-        <h1 id="navbar-title">Tedavi Planı Akışı</h1>
-        <ul id="navbar-links">
-            <li><a href="#gunluk-adim">Günlük Adım</a></li>
-            <li><a href="#google-apple">Google Fit & Apple Health</a></li>
-            <li><a href="#diz-acisi">Diz Açısı</a></li>
-            <li><a href="#foto-goruntu">Fotoğraf (Overlay ile 2 Çekim)</a></li>
-            <li><a href="#egzersiz-videolar">Egzersiz Videoları</a></li>
-            <li><a href="#ozel-notlar">Özel Notlar</a></li>
-        </ul>
-    </nav>
+  <nav>
+    <h1>Tedavi Planı</h1>
+    <ul>
+      <li><a href="#gunluk-adim">Günlük Adım</a></li>
+      <li><a href="#diz-acisi">Diz Açısı</a></li>
+      <li><a href="#fotograf">Fotoğraf</a></li>
+      <li><a href="#egzersiz">Egzersiz Videoları</a></li>
+      <li><a href="#ozel-notlar">Özel Notlar</a></li>
+    </ul>
+  </nav>
 
-    <div id="timeline-container">
-        <h2 id="timeline-title">Tedavi Günleri</h2>
-        <ul id="timeline">
-            <li class="timeline-item" id="gun-1">
-                <strong>Gün 1:</strong> Adım hedefi: 5000. Egzersiz: Diz bükme hareketleri.
-            </li>
-            <li class="timeline-item" id="gun-2">
-                <strong>Gün 2:</strong> Adım hedefi: 7000. Egzersiz: Squat hareketi.
-            </li>
-            <li class="timeline-item" id="gun-3">
-                <strong>Gün 3:</strong> Adım hedefi: 8000. Egzersiz: Plank egzersizi.
-            </li>
-        </ul>
-    </div>
-
-    <section id="gunluk-adim" class="content-section">
-        <h3>Günlük Adım</h3>
-        <p>Günlük adım hedefinizi buradan takip edebilirsiniz.</p>
+  <main>
+    <section id="gunluk-adim">
+      <h2>Günlük Adım</h2>
+      <p>Günlük adım hedefinizi buradan takip edebilirsiniz.</p>
+      <input type="number" id="adim-sayisi" placeholder="Adım sayınızı girin" />
+      <button onclick="adimKaydet()">Kaydet</button>
+      <p id="adim-sonuc"></p>
     </section>
 
-    <section id="google-apple" class="content-section">
-        <h3>Google Fit & Apple Health</h3>
-        <p>Google Fit ve Apple Health bağlantıları ile sağlık verilerinizi entegre edin.</p>
+    <section id="diz-acisi">
+      <h2>Diz Açısı</h2>
+      <p class="content-placeholder">Diz açısı ölçümleri ve analizleri burada görünecek.</p>
     </section>
 
-    <section id="diz-acisi" class="content-section">
-        <h3>Diz Açısı</h3>
-        <p>Diz açısı ölçümleri ve analizleri burada görünecek.</p>
+    <section id="fotograf">
+      <h2>Fotoğraf</h2>
+      <p class="content-placeholder">Fotoğraflarınızı karşılaştırmalı olarak görüntüleyin.</p>
     </section>
 
-    <section id="foto-goruntu" class="content-section">
-        <h3>Fotoğraf (Overlay ile 2 Çekim)</h3>
-        <p>Fotoğraflarınızı karşılaştırmalı olarak görüntüleyin.</p>
+    <section id="egzersiz">
+      <h2>Egzersiz Videoları</h2>
+      <p class="content-placeholder">Egzersiz videolarınızı buradan izleyebilirsiniz.</p>
     </section>
 
-    <section id="egzersiz-videolar" class="content-section">
-        <h3>Egzersiz Videoları</h3>
-        <p>Egzersiz videolarınızı buradan izleyebilirsiniz.</p>
+    <section id="ozel-notlar">
+      <h2>Özel Notlar</h2>
+      <p class="content-placeholder">Özel notlarınızı bu alana ekleyin.</p>
     </section>
+  </main>
 
-    <section id="ozel-notlar" class="content-section">
-        <h3>Özel Notlar</h3>
-        <p>Özel notlarınızı bu alana ekleyin.</p>
-    </section>
+  <script>
+    function adimKaydet() {
+      const adimSayisi = document.getElementById('adim-sayisi').value;
+      const sonuc = document.getElementById('adim-sonuc');
+      if(adimSayisi) {
+        sonuc.textContent = `Girdiğiniz adım sayısı: ${adimSayisi}`;
+        // Burada veriyi sunucuya gönderme işlemi yapılabilir
+      } else {
+        sonuc.textContent = 'Lütfen adım sayınızı giriniz.';
+      }
+    }
+  </script>
+
 </body>
 </html>

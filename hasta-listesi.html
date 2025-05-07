@@ -1,62 +1,184 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hasta Listesi ve Ekleme Alanı</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hasta Yönetimi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f4f7;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #1f6f8b;
+    }
+
+    .hasta-form {
+      margin-bottom: 30px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .form-row input,
+    .form-row textarea {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .form-row textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    #hasta-ekle-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: #1f6f8b;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    #hasta-ekle-btn:hover {
+      background-color: #155d73;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    #hasta-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background-color: white;
+    }
+
+    #hasta-table th,
+    #hasta-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #hasta-table th {
+      background-color: #1f6f8b;
+      color: white;
+    }
+
+    #hasta-table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    button.edit-btn,
+    button.delete-btn {
+      padding: 6px 10px;
+      margin: 2px;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #ffc107;
+      color: #333;
+    }
+
+    .edit-btn:hover {
+      background-color: #e0a800;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #bd2130;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <div class="hasta-liste-alani">
-    <h2>Hasta Listesi ve Ekleme Alanı</h2>
-    <div class="hasta-ekle">
-      <h3>Yeni Hasta Ekle</h3>
-      <label for="hastaAdi">Hasta Adı:</label>
-      <input type="text" id="hastaAdi" placeholder="Hasta Adını Girin">
+  <div class="container">
+    <h1>Hasta Ekleme ve Listeleme</h1>
 
-      <label for="durum">Durum:</label>
-      <select id="durum">
-        <option value="Aktif">Aktif</option>
-        <option value="Pasif">Pasif</option>
-        <option value="Beklemede">Beklemede</option>
-      </select>
+    <!-- Hasta Ekleme Formu -->
+    <form id="hasta-form" class="hasta-form">
+      <div class="form-row">
+        <input type="text" id="hasta-ad" placeholder="İsim" required>
+        <input type="text" id="hasta-soyad" placeholder="Soyisim" required>
+      </div>
+      <div class="form-row">
+        <input type="tel" id="hasta-telefon" placeholder="Telefon" required>
+        <input type="password" id="hasta-sifre" placeholder="Şifre">
+      </div>
+      <div class="form-row">
+        <input type="date" id="tedavi-baslangic" placeholder="Tedavi Başlangıç">
+        <input type="date" id="tedavi-bitis" placeholder="Tedavi Bitiş">
+      </div>
+      <div class="form-row">
+        <input type="number" id="haftalik-adim" placeholder="Haftalık Adım Hedefi">
+        <textarea id="notlar" placeholder="Özel Notlar"></textarea>
+      </div>
+      <button type="submit" id="hasta-ekle-btn"><i class="fa fa-user-plus"></i> Hasta Ekle</button>
+    </form>
 
-      <button id="ekleButonu">Ekle</button>
+    <!-- Hasta Tablosu -->
+    <div class="table-wrapper">
+      <h2>Mevcut Hastalar</h2>
+      <table id="hasta-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>İsim</th>
+            <th>Soyisim</th>
+            <th>Telefon</th>
+            <th>Başlangıç</th>
+            <th>Bitiş</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS ile dolacak -->
+        </tbody>
+      </table>
     </div>
-
-    <table class="hasta-tablosu">
-      <thead>
-        <tr>
-          <th>Hasta Adı</th>
-          <th>Durum</th>
-          <th>İletişim</th>
-        </tr>
-      </thead>
-      <tbody id="hastaListesi">
-        <tr>
-          <td>Ali Yılmaz</td>
-          <td>Aktif</td>
-          <td class="iletisim-ikonlari">
-            <button class="mesaj-btn"><i class="fas fa-comment-alt"></i> Mesaj</button>
-            <button class="sesli-btn"><i class="fas fa-phone-alt"></i> Sesli</button>
-            <button class="goruntulu-btn"><i class="fas fa-video"></i> Görüntülü</button>
-          </td>
-        </tr>
-        <tr>
-          <td>Ayşe Kaya</td>
-          <td>Pasif</td>
-          <td class="iletisim-ikonlari">
-            <button class="mesaj-btn"><i class="fas fa-comment-alt"></i> Mesaj</button>
-            <button class="sesli-btn"><i class="fas fa-phone-alt"></i> Sesli</button>
-            <button class="goruntulu-btn"><i class="fas fa-video"></i> Görüntülü</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
-</body>
 
+  <script src="hastalistesi.js"></script>
+</body>
 </html>

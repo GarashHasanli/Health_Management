@@ -87,6 +87,10 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
                 const userRole = data.user.role;
+                const userId = data.user.id;
+
+                // Giriş başarılı → kullanıcı ID'sini localStorage'a kaydet
+                localStorage.setItem('userId', userId);
 
                 if (userRole === 'secretary') {
                     window.location.href = 'hasta-listesi.html';
@@ -208,13 +212,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- Bilgilendirme Sayfası: hasta tedavi geçmişi ---
+    if (document.title.toLowerCase().includes('tedavi planlarım')) {
+        const userId = localStorage.getItem('userId');
+        if (!userId) return;
+
+        fetch(`http://localhost:3000/patients/${userId}`)
+            .then(res => res.json())
+            .then(p => {
+                const tbody = document.querySelector('#tedavi-planlari tbody');
+                tbody.innerHTML = '';
+
+                const baslangic = p.treatment_start ? new Date(p.treatment_start).toLocaleDateString('tr-TR') : '-';
+                const bitis     = p.treatment_end   ? new Date(p.treatment_end).toLocaleDateString('tr-TR') : '-';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${baslangic}</td>
+                        <td>Fizik Tedavi</td>
+                        <td>${bitis !== '-' ? 'Tamamlandı' : 'Devam Ediyor'}</td>
+                    </tr>
+                `;
+            })
+            .catch(err => {
+                console.error('Tedavi geçmişi hatası:', err);
+                const tbody = document.querySelector('#tedavi-planlari tbody');
+                tbody.innerHTML = `<tr><td colspan="3">Tedavi planı bilgisi alınamadı.</td></tr>`;
+            });
+    }
+
     // --- Bilgilendirme Yönlendirme ---
     const planVarBtn = document.getElementById('plan-var');
     const planYokBtn = document.getElementById('plan-yok');
 
     if (planVarBtn) {
         planVarBtn.addEventListener('click', () => {
-            window.location.href = 'plan-var.html';
+            window.location.href = 'tedavi-plan-akisi.html';
         });
     }
 
