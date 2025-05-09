@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Raporlar</title>
+  <link rel="stylesheet" href="yonetimpaneli.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Yönetim Paneli</h2>
+    <ul class="nav">
+      <li class="nav-item"><a href="yonetimpaneli.html">FT Listesi + Yeni FT Ekleme</a></li>
+      <li class="nav-item"><a href="hastalistesi.html">Hasta Listesi</a></li>
+      <li class="nav-item active"><a href="raporlar.html">Raporlar</a></li>
+      <li class="nav-item"><a href="bildirim.html">Bildirimler</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h1>Rapor Oluştur</h1>
+    <form id="rapor-form" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="hasta-isim">Hasta İsim:</label>
+        <input type="text" id="hasta-isim" name="hasta_isim" placeholder="İsim" required />
+      </div>
+      <div class="form-group">
+        <label for="hasta-soyisim">Hasta Soyisim:</label>
+        <input type="text" id="hasta-soyisim" name="hasta_soyisim" placeholder="Soyisim" required />
+      </div>
+      <div class="form-group">
+        <label for="gunluk-adim">Günlük Adım Hedefi:</label>
+        <input type="number" id="gunluk-adim" name="gunluk_adim" placeholder="Adım Sayısı" required />
+      </div>
+      <div class="form-group">
+        <label for="diz-acisi">Diz Açısı (°):</label>
+        <input type="number" id="diz-acisi" name="diz_acisi" placeholder="0-180" required />
+      </div>
+      <div class="form-group">
+        <label for="egzersiz-video">Egzersiz Videosu:</label>
+        <input type="file" id="egzersiz-video" name="video" accept="video/*" />
+      </div>
+      <div class="form-group">
+        <label for="foto-karsilastirma">Fotoğraf Karşılaştırma:</label>
+        <input type="file" id="foto-karsilastirma" name="foto" accept="image/*" />
+      </div>
+      <div class="form-group">
+        <label for="ozel-not">Özel Not:</label>
+        <textarea id="ozel-not" name="ozel_not" rows="3" placeholder="Doktordan özel not..."></textarea>
+      </div>
+      <button type="submit" id="rapor-gonder-btn">Raporu Gönder</button>
+    </form>
+
+    <div class="rapor-list">
+      <h2>Gönderilen Raporlar</h2>
+      <table id="rapor-table">
+        <thead>
+          <tr>
+            <th>İsim</th>
+            <th>Soyisim</th>
+            <th>Adım</th>
+            <th>Diz Açısı</th>
+            <th>Video</th>
+            <th>Fotoğraf</th>
+            <th>Not</th>
+            <th>Tarih</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS ile doldurulacak -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="yonetimpaneli.js"></script>
+</body>
+</html>
