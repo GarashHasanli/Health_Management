@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   // ---------------- FT işlemleri ----------------
-  const tbody         = document.querySelector("#secretary-table tbody");
-  const form          = document.getElementById("ft-form");
-  const nameInput     = document.getElementById("ft-name");
-  const surnameInput  = document.getElementById("ft-surname");
-  const phoneInput    = document.getElementById("ft-phone");
+  const tbody = document.querySelector("#secretary-table tbody");
+  const form = document.getElementById("ft-form");
+  const nameInput = document.getElementById("ft-name");
+  const surnameInput = document.getElementById("ft-surname");
+  const phoneInput = document.getElementById("ft-phone");
   const passwordInput = document.getElementById("ft-password");
-  const submitBtn     = document.getElementById("ft-ekle-btn");
+  const submitBtn = document.getElementById("ft-ekle-btn");
 
   let editingId = null;
 
@@ -17,16 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const payload = {
         first_name: nameInput.value.trim(),
-        last_name:  surnameInput.value.trim(),
-        phone:      phoneInput.value.trim(),
-        password:   passwordInput.value.trim()
+        last_name: surnameInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        password: passwordInput.value.trim()
       };
 
       if (!payload.first_name || !payload.last_name || !payload.phone || (!editingId && !payload.password)) {
         return alert("Lütfen tüm zorunlu alanları doldurun!");
       }
 
-      const url    = editingId
+      const url = editingId
         ? `http://localhost:3000/secretaries/${editingId}`
         : "http://localhost:3000/secretaries";
       const method = editingId ? "PUT" : "POST";
@@ -63,20 +63,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const formattedDate = isNaN(date)
           ? "-"
           : date.toLocaleDateString("tr-TR", {
-              day:   "2-digit",
+              day: "2-digit",
               month: "2-digit",
-              year:  "numeric"
+              year: "numeric"
             });
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${sec.id}</td>
           <td>${sec.first_name || "-"}</td>
-          <td>${sec.last_name  || "-"}</td>
-          <td>${sec.phone      || "-"}</td>
+          <td>${sec.last_name || "-"}</td>
+          <td>${sec.phone || "-"}</td>
           <td>${formattedDate}</td>
           <td>
-            <button class="edit-btn"   data-id="${sec.id}">Düzenle</button>
+            <button class="edit-btn" data-id="${sec.id}">Düzenle</button>
             <button class="delete-btn" data-id="${sec.id}">Sil</button>
           </td>`;
         tbody.appendChild(tr);
@@ -97,12 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const res = await fetch(`http://localhost:3000/secretaries`);
           if (!res.ok) throw await res.text();
           const list = await res.json();
-          const sec  = list.find(x => x.id == id);
+          const sec = list.find(x => x.id == id);
           if (!sec) return alert("FT bulunamadı!");
 
-          nameInput.value     = sec.first_name || "";
-          surnameInput.value  = sec.last_name  || "";
-          phoneInput.value    = sec.phone      || "";
+          nameInput.value = sec.first_name || "";
+          surnameInput.value = sec.last_name || "";
+          phoneInput.value = sec.phone || "";
           passwordInput.value = "";
 
           editingId = id;
@@ -134,39 +134,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ---------------- Rapor işlemleri ----------------
+  // ---------------- Raporlar işlemleri (raporlar.html sayfası) ----------------
   const raporForm = document.getElementById("rapor-form");
+  const userSelect = document.getElementById("user-select");
   const raporTable = document.querySelector("#rapor-table tbody");
   const raporBtn = document.getElementById("rapor-gonder-btn");
 
-  const rName = document.getElementById("hasta-isim");
-  const rSurname = document.getElementById("hasta-soyisim");
-  const rAdim = document.getElementById("gunluk-adim");
-  const rAci = document.getElementById("diz-acisi");
-  const rVideo = document.getElementById("egzersiz-video");
-  const rFoto = document.getElementById("foto-karsilastirma");
-  const rNot = document.getElementById("ozel-not");
+  const adimInput = document.getElementById("gunluk-adim");
+  const aciInput = document.getElementById("diz-acisi");
+  const videoInput = document.getElementById("egzersiz-video");
+  const fotoInput = document.getElementById("foto-karsilastirma");
+  const notInput = document.getElementById("ozel-not");
 
+  let hastaListesi = [];
   let raporEditId = null;
 
   if (raporForm) {
+    loadPatients();
     loadReports();
 
     raporForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      if (rVideo.files[0] && rVideo.files[0].size > 50 * 1024 * 1024) {
+
+      const userId = userSelect.value;
+      const hasta = hastaListesi.find(h => h.id == userId);
+      if (!userId || !hasta) {
+        return alert("Lütfen hasta seçiniz.");
+      }
+
+      if (videoInput.files[0] && videoInput.files[0].size > 50 * 1024 * 1024) {
         return alert("Video dosyası 50MB'den büyük olamaz.");
       }
 
       const formData = new FormData();
-      formData.append("isim", rName.value.trim());
-      formData.append("soyisim", rSurname.value.trim());
-      formData.append("adim", rAdim.value.trim());
-      formData.append("aci", rAci.value.trim());
-      formData.append("video", rVideo.files[0] || "");
-      formData.append("foto", rFoto.files[0] || "");
-      formData.append("ozel_not", rNot.value.trim());
+      formData.append("user_id", userId);
+      formData.append("isim", hasta.first_name);
+      formData.append("soyisim", hasta.last_name);
+      formData.append("adim", adimInput.value.trim());
+      formData.append("aci", aciInput.value.trim());
+      formData.append("video", videoInput.files[0] || "");
+      formData.append("foto", fotoInput.files[0] || "");
+      formData.append("ozel_not", notInput.value.trim());
 
       const url = raporEditId
         ? `http://localhost:3000/raporlar/${raporEditId}`
@@ -192,10 +200,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  async function loadPatients() {
+    try {
+      const res = await fetch("http://localhost:3000/patients");
+      const list = await res.json();
+      hastaListesi = list;
+
+      userSelect.innerHTML = `<option value="">-- Hasta Seçiniz --</option>`;
+      list.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = `${p.first_name} ${p.last_name}`;
+        userSelect.appendChild(opt);
+      });
+    } catch (err) {
+      console.error("Hasta listesi alınamadı:", err);
+    }
+  }
+
   async function loadReports() {
     try {
       const res = await fetch("http://localhost:3000/raporlar");
-      if (!res.ok) throw await res.text();
       const list = await res.json();
 
       raporTable.innerHTML = "";
@@ -231,16 +256,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const id = btn.dataset.id;
         try {
           const res = await fetch(`http://localhost:3000/raporlar/${id}`);
-          if (!res.ok) throw await res.text();
           const r = await res.json();
 
-          rName.value = r.isim || "";
-          rSurname.value = r.soyisim || "";
-          rAdim.value = r.adim || "";
-          rAci.value = r.aci || "";
-          rNot.value = r.not || "";
-          rVideo.value = "";
-          rFoto.value = "";
+          const selected = hastaListesi.find(h => h.first_name === r.isim && h.last_name === r.soyisim);
+          userSelect.value = selected?.id || "";
+
+          adimInput.value = r.adim || "";
+          aciInput.value = r.aci || "";
+          notInput.value = r.ozel_not || "";
+          videoInput.value = "";
+          fotoInput.value = "";
 
           raporEditId = id;
           raporBtn.textContent = "Güncelle";

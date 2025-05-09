@@ -1,5 +1,3 @@
-// style.js
-
 document.addEventListener('DOMContentLoaded', function () {
     // --- "Hemen Başla" butonları yönlendirmesi ---
     document.querySelectorAll('[data-action="start"]').forEach(button => {
@@ -81,32 +79,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     role
                 })
             })
-                .then(res => {
-                    if (!res.ok) {
-                        return res.json().then(data => { throw new Error(data.error || res.statusText); });
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    const userRole = data.user.role;
-                    const userId = data.user.id;
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => { throw new Error(data.error || res.statusText); });
+                }
+                return res.json();
+            })
+            .then(data => {
+                const userRole = data.user.role;
+                const userId = data.user.id;
 
-                    localStorage.setItem('userId', userId);
+                localStorage.setItem('userId', userId);
 
-                    if (userRole === 'secretary') {
-                        window.location.href = 'hasta-listesi.html';
-                    } else if (userRole === 'patient') {
-                        window.location.href = 'hasta-bilgilendirme.html';
-                    } else if (userRole === 'admin') {
-                        window.location.href = 'yonetimpaneli.html';
-                    } else {
-                        alert('Bilinmeyen rol!');
-                    }
-                })
-                .catch(err => {
-                    console.error('Login Error:', err);
-                    alert(err.message || 'Giriş sırasında hata oluştu.');
-                });
+                if (userRole === 'secretary') {
+                    window.location.href = 'hasta-listesi.html';
+                } else if (userRole === 'patient') {
+                    window.location.href = 'hasta-bilgilendirme.html';
+                } else if (userRole === 'admin') {
+                    window.location.href = 'yonetimpaneli.html';
+                } else {
+                    alert('Bilinmeyen rol!');
+                }
+            })
+            .catch(err => {
+                console.error('Login Error:', err);
+                alert(err.message || 'Giriş sırasında hata oluştu.');
+            });
         });
 
         if (registerButton) {
@@ -197,23 +195,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     role: 'patient'
                 })
             })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.message === 'Kayıt başarılı') {
-                        alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
-                        window.location.href = 'login.html';
-                    } else {
-                        alert(data.error || 'Kayıt başarısız!');
-                    }
-                })
-                .catch(err => {
-                    console.error('Register Error:', err);
-                    alert('Kayıt sırasında hata oluştu.');
-                });
+            .then(res => res.json())
+            .then(data => {
+                if (data.message === 'Kayıt başarılı') {
+                    alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(data.error || 'Kayıt başarısız!');
+                }
+            })
+            .catch(err => {
+                console.error('Register Error:', err);
+                alert('Kayıt sırasında hata oluştu.');
+            });
         });
     }
 
-    // --- Hasta Bilgilendirme Sayfası: tedavi planları ---
+    // --- Bilgilendirme Sayfası: hasta tedavi geçmişi ---
     if (document.title.toLowerCase().includes('tedavi planlarım')) {
         const userId = localStorage.getItem('userId');
         if (!userId) return;
@@ -225,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tbody.innerHTML = '';
 
                 const baslangic = p.treatment_start ? new Date(p.treatment_start).toLocaleDateString('tr-TR') : '-';
-                const bitis = p.treatment_end ? new Date(p.treatment_end).toLocaleDateString('tr-TR') : '-';
+                const bitis     = p.treatment_end   ? new Date(p.treatment_end).toLocaleDateString('tr-TR') : '-';
 
                 tbody.innerHTML += `
                     <tr>
@@ -242,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // --- Yönlendirme butonları ---
+    // --- Bilgilendirme Yönlendirme ---
     const planVarBtn = document.getElementById('plan-var');
     const planYokBtn = document.getElementById('plan-yok');
 
@@ -258,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Günlük Adım Takibi (Tedavi Planı Sayfası) ---
+    //  Günlük Adım Takibi (Tedavi Planı Sayfası)
     if (document.title.toLowerCase().includes('tedavi planı')) {
         const userId = localStorage.getItem('userId');
         const adimInput = document.getElementById("adim-sayisi");
@@ -269,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         async function loadAdimTablosu() {
             try {
-                const res = await fetch(`http://localhost:3000/adimlar/${userId}`);
+                const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
                 if (!res.ok) throw await res.text();
                 const data = await res.json();
 
@@ -277,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.forEach(row => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                        <td>${row.tarih}</td>
+                        <td>${new Date(row.tarih).toLocaleDateString('tr-TR')}</td>
                         <td>${row.hedef_adim ?? '-'}</td>
                         <td>${row.hasta_adim ?? '-'}</td>
                     `;
@@ -289,23 +287,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         window.adimKaydet = async function () {
-            const adimDegeri = adimInput.value.trim();
-            if (!adimDegeri) {
-                sonucP.textContent = "Lütfen adım sayınızı girin.";
+            const adimDegeri = adimInput.value.trim().replace(",", ".");
+            const parsedAdim = parseFloat(adimDegeri);
+        
+            if (isNaN(parsedAdim)) {
+                sonucP.textContent = "Lütfen geçerli bir adım sayısı girin.";
                 return;
             }
-
+        
             try {
-                const res = await fetch(`http://localhost:3000/adimlar/${userId}`);
+                const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
                 const list = await res.json();
                 const bugun = new Date().toISOString().split('T')[0];
-                const kayit = list.find(x => x.tarih === bugun);
-
+                const kayit = list.find(x => x.tarih?.slice(0, 10) === bugun);
+        
                 if (kayit) {
                     await fetch(`http://localhost:3000/adimlar/${kayit.id}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ hasta_adim: parseInt(adimDegeri) })
+                        body: JSON.stringify({ hasta_adim: parsedAdim })
                     });
                     sonucP.textContent = "Bugünkü adımınız güncellendi.";
                 } else {
@@ -317,12 +317,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             isim: "Hasta",
                             soyisim: "Bilgisi",
                             tarih: bugun,
-                            hasta_adim: parseInt(adimDegeri)
+                            hasta_adim: parsedAdim
                         })
                     });
                     sonucP.textContent = "Bugünkü adımınız kaydedildi.";
                 }
-
+        
                 adimInput.value = "";
                 loadAdimTablosu();
             } catch (err) {
@@ -330,7 +330,50 @@ document.addEventListener('DOMContentLoaded', function () {
                 sonucP.textContent = "Hata oluştu.";
             }
         };
+        
 
         loadAdimTablosu();
     }
 });
+
+
+// --- Raporlar (Diz Açısı, Fotoğraf, Video, Not) ---
+if (document.title.toLowerCase().includes('tedavi planı')) {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.warn("userId bulunamadı, kullanıcı giriş yapmamış olabilir.");
+    }
+  
+    fetch(`http://localhost:3000/raporlar/kullanici/${userId}`)
+      .then(res => res.json())
+      .then(rapor => {
+        // Diz Açısı
+        const diz = document.querySelector("#diz-acisi .content-placeholder");
+        if (diz) diz.textContent = rapor.aci ?? "Veri yok";
+  
+        // Fotoğraf
+        const foto = document.querySelector("#fotograf .content-placeholder");
+        if (foto) {
+          foto.innerHTML = rapor.foto
+            ? `<img src="${rapor.foto}" alt="Fotoğraf" style="max-width:100%; height:auto;">`
+            : "Veri yok";
+        }
+  
+        // Video
+        const video = document.querySelector("#egzersiz .content-placeholder");
+        if (video) {
+          video.innerHTML = rapor.video
+            ? `<video src="${rapor.video}" controls style="max-width:100%; height:auto;"></video>`
+            : "Veri yok";
+        }
+  
+        // Özel Not
+        const not = document.querySelector("#ozel-notlar .content-placeholder");
+        if (not) not.textContent = rapor.ozel_not ?? "Veri yok";
+      })
+      .catch(err => {
+        console.error("Rapor verisi alınamadı:", err);
+      });
+  }
+
+
