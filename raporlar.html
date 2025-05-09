@@ -22,13 +22,13 @@
     <h1>Rapor Oluştur</h1>
     <form id="rapor-form" enctype="multipart/form-data">
       <div class="form-group">
-        <label for="hasta-isim">Hasta İsim:</label>
-        <input type="text" id="hasta-isim" name="hasta_isim" placeholder="İsim" required />
+        <label for="user-select">Hasta Seç:</label>
+        <select id="user-select" name="user_id" required>
+          <option value="">-- Hasta Seçiniz --</option>
+          <!-- JS ile doldurulacak -->
+        </select>
       </div>
-      <div class="form-group">
-        <label for="hasta-soyisim">Hasta Soyisim:</label>
-        <input type="text" id="hasta-soyisim" name="hasta_soyisim" placeholder="Soyisim" required />
-      </div>
+
       <div class="form-group">
         <label for="gunluk-adim">Günlük Adım Hedefi:</label>
         <input type="number" id="gunluk-adim" name="gunluk_adim" placeholder="Adım Sayısı" required />
