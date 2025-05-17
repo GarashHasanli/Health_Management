@@ -212,33 +212,47 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Bilgilendirme Sayfası: hasta tedavi geçmişi ---
-    if (document.title.toLowerCase().includes('tedavi planlarım')) {
-        const userId = localStorage.getItem('userId');
-        if (!userId) return;
+if (document.title.toLowerCase().includes('tedavi planlarım')) {
+const userId = localStorage.getItem("userId");
+  if (!userId) return alert("Hasta bilgisi bulunamadı.");
 
-        fetch(`http://localhost:3000/patients/${userId}`)
-            .then(res => res.json())
-            .then(p => {
-                const tbody = document.querySelector('#tedavi-planlari tbody');
-                tbody.innerHTML = '';
+  fetch(`http://localhost:3000/patients/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#tedavi-tablosu tbody");
 
-                const baslangic = p.treatment_start ? new Date(p.treatment_start).toLocaleDateString('tr-TR') : '-';
-                const bitis     = p.treatment_end   ? new Date(p.treatment_end).toLocaleDateString('tr-TR') : '-';
+      const start = data.tedavi_baslangic ? new Date(data.tedavi_baslangic).toLocaleDateString("tr-TR") : "-";
+      const end   = data.tedavi_bitis     ? new Date(data.tedavi_bitis).toLocaleDateString("tr-TR") : "-";
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${baslangic}</td>
-                        <td>Fizik Tedavi</td>
-                        <td>${bitis !== '-' ? 'Tamamlandı' : 'Devam Ediyor'}</td>
-                    </tr>
-                `;
-            })
-            .catch(err => {
-                console.error('Tedavi geçmişi hatası:', err);
-                const tbody = document.querySelector('#tedavi-planlari tbody');
-                tbody.innerHTML = `<tr><td colspan="3">Tedavi planı bilgisi alınamadı.</td></tr>`;
-            });
-    }
+      let durum = "-";
+      if (data.tedavi_baslangic && data.tedavi_bitis) {
+        const baslangic = new Date(data.tedavi_baslangic);
+        const bitis     = new Date(data.tedavi_bitis);
+        const bugun     = new Date();
+
+        if (bugun < baslangic) {
+          durum = "Bekliyor";
+        } else if (bugun >= baslangic && bugun <= bitis) {
+          durum = "Devam Ediyor";
+        } else {
+          durum = "Tamamlandı";
+        }
+      }
+
+      const row = `
+        <tr>
+          <td data-label="Başlangıç">${start}</td>
+          <td data-label="Bitiş">${end}</td>
+          <td data-label="Durum">${durum}</td>
+        </tr>
+      `;
+      tbody.innerHTML = row;
+    })
+    .catch(err => {
+      console.error("Tedavi planı alınamadı:", err);
+      alert("Tedavi planı verisi alınırken bir hata oluştu.");
+    });
+}
 
     // --- Bilgilendirme Yönlendirme ---
     const planVarBtn = document.getElementById('plan-var');
@@ -256,85 +270,91 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    //  Günlük Adım Takibi (Tedavi Planı Sayfası)
-    if (document.title.toLowerCase().includes('tedavi planı')) {
-        const userId = localStorage.getItem('userId');
-        const adimInput = document.getElementById("adim-sayisi");
-        const sonucP = document.getElementById("adim-sonuc");
-        const tabloBody = document.querySelector("#adim-tablosu tbody");
+// Günlük Adım Takibi (Tedavi Planı Sayfası)
+if (document.title.toLowerCase().includes('tedavi planı')) {
+    const userId = localStorage.getItem('userId');
+    const adimInput = document.getElementById("adim-sayisi");
+    const sonucP = document.getElementById("adim-sonuc");
+    const tabloBody = document.querySelector("#adim-tablosu tbody");
 
-        if (!userId || !adimInput || !sonucP || !tabloBody) return;
+    if (!userId || !adimInput || !sonucP || !tabloBody) return;
 
-        async function loadAdimTablosu() {
-            try {
-                const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
-                if (!res.ok) throw await res.text();
-                const data = await res.json();
+    async function loadAdimTablosu() {
+        try {
+            const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
+            if (!res.ok) throw await res.text();
+            const data = await res.json();
 
-                tabloBody.innerHTML = "";
-                data.forEach(row => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${new Date(row.tarih).toLocaleDateString('tr-TR')}</td>
-                        <td>${row.hedef_adim ?? '-'}</td>
-                        <td>${row.hasta_adim ?? '-'}</td>
-                    `;
-                    tabloBody.appendChild(tr);
-                });
-            } catch (err) {
-                console.error("Adım tablosu yüklenemedi:", err);
-            }
+            tabloBody.innerHTML = "";
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${new Date(row.tarih).toLocaleDateString('tr-TR')}</td>
+                    <td>${row.hedef_adim !== null ? row.hedef_adim.toLocaleString('tr-TR') : '-'}</td>
+                    <td>${row.hasta_adim !== null ? row.hasta_adim.toLocaleString('tr-TR') : '-'}</td>
+                `;
+                tabloBody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error("Adım tablosu yüklenemedi:", err);
+        }
+    }
+
+    window.adimKaydet = async function () {
+        const adimDegeri = adimInput.value.trim().replace(/\./g, '').replace(",", ".");
+        const parsedAdim = parseFloat(adimDegeri);
+        const bugun = new Date().toISOString().split('T')[0];
+
+        if (!userId || isNaN(parsedAdim)) {
+            sonucP.textContent = "Lütfen geçerli bir adım sayısı girin.";
+            return;
         }
 
-        window.adimKaydet = async function () {
-            const adimDegeri = adimInput.value.trim().replace(",", ".");
-            const parsedAdim = parseFloat(adimDegeri);
-        
-            if (isNaN(parsedAdim)) {
-                sonucP.textContent = "Lütfen geçerli bir adım sayısı girin.";
-                return;
-            }
-        
-            try {
-                const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
-                const list = await res.json();
-                const bugun = new Date().toISOString().split('T')[0];
-                const kayit = list.find(x => x.tarih?.slice(0, 10) === bugun);
-        
-                if (kayit) {
-                    await fetch(`http://localhost:3000/adimlar/${kayit.id}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ hasta_adim: parsedAdim })
-                    });
-                    sonucP.textContent = "Bugünkü adımınız güncellendi.";
-                } else {
-                    await fetch(`http://localhost:3000/adimlar`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            user_id: userId,
-                            isim: "Hasta",
-                            soyisim: "Bilgisi",
-                            tarih: bugun,
-                            hasta_adim: parsedAdim
-                        })
-                    });
-                    sonucP.textContent = "Bugünkü adımınız kaydedildi.";
-                }
-        
-                adimInput.value = "";
-                loadAdimTablosu();
-            } catch (err) {
-                console.error("Adım kaydetme hatası:", err);
-                sonucP.textContent = "Hata oluştu.";
-            }
-        };
-        
+        try {
+            const res = await fetch(`http://localhost:3000/adimlar/kullanici/${userId}`);
+            const list = await res.json();
+            const kayit = list.find(x => x.tarih.slice(0, 10) === bugun);
 
-        loadAdimTablosu();
-    }
-});
+
+            if (kayit) {
+                // Kayıt varsa güncelle
+                await fetch(`http://localhost:3000/adimlar/${kayit.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ hasta_adim: parsedAdim })
+                });
+                sonucP.textContent = "Bugünkü adımınız güncellendi.";
+            } else {
+                // Hasta bilgilerini çek
+                const hastaRes = await fetch(`http://localhost:3000/patients/${userId}`);
+                const hasta = await hastaRes.json();
+
+                await fetch(`http://localhost:3000/adimlar`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        isim: hasta.first_name || "Hasta",
+                        soyisim: hasta.last_name || "Bilgisi",
+                        tarih: bugun,
+                        hasta_adim: parsedAdim,
+                        hedef_adim: null
+                    })
+                });
+                sonucP.textContent = "Bugünkü adımınız kaydedildi.";
+            }
+
+            adimInput.value = "";
+            loadAdimTablosu();
+        } catch (err) {
+            console.error("Adım kaydetme hatası:", err);
+            sonucP.textContent = "Hata oluştu.";
+        }
+    };
+
+    loadAdimTablosu();
+}
+
 
 
 // --- Raporlar (Diz Açısı, Fotoğraf, Video, Not) ---
@@ -375,5 +395,4 @@ if (document.title.toLowerCase().includes('tedavi planı')) {
         console.error("Rapor verisi alınamadı:", err);
       });
   }
-
-
+});
