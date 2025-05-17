@@ -8,7 +8,6 @@
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-    integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   />
@@ -31,22 +30,22 @@
     <!-- Yeni FT Ekleme Formu -->
     <div class="ft-ekle">
       <h3>Yeni FT Ekle</h3>
-      <form id="ft-form">
+      <form id="ft-form" autocomplete="off">
         <div class="form-group">
           <label for="ft-name">İsim:</label>
-          <input type="text" id="ft-name" name="first_name" placeholder="İsim" required />
+          <input type="text" id="ft-name" name="first_name" placeholder="İsim" />
         </div>
         <div class="form-group">
           <label for="ft-surname">Soyisim:</label>
-          <input type="text" id="ft-surname" name="last_name" placeholder="Soyisim" required />
+          <input type="text" id="ft-surname" name="last_name" placeholder="Soyisim" />
         </div>
         <div class="form-group">
           <label for="ft-phone"><i class="fa-solid fa-phone"></i> Telefon Numarası:</label>
-          <input type="tel" id="ft-phone" name="phone" placeholder="0 (5XX) XXX XX XX" required />
+          <input type="tel" id="ft-phone" name="phone" placeholder="0 (5XX) XXX XX XX" />
         </div>
         <div class="form-group">
           <label for="ft-password"><i class="fa-solid fa-lock"></i> Şifre:</label>
-          <input type="password" id="ft-password" name="password" placeholder="Şifre" required />
+          <input type="password" id="ft-password" name="password" placeholder="Şifre" />
         </div>
         <button type="submit" id="ft-ekle-btn">FT Ekle</button>
       </form>
