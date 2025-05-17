@@ -271,16 +271,23 @@ app.delete('/patients/:id', async (req, res) => {
 // ---------------- Rapor CRUD ----------------
 
 app.post('/raporlar', upload.fields([{ name: 'video' }, { name: 'foto' }]), async (req, res) => {
-  const { user_id, isim, soyisim, adim, aci, ozel_not } = req.body;
+  let { user_id, isim, soyisim, adim, aci, ozel_not } = req.body;
   const video = req.files?.video?.[0]?.filename || null;
   const foto = req.files?.foto?.[0]?.filename || null;
+
+  // Adım verisini düzgün sayıya çevir (10.000 → 10000)
+  adim = typeof adim === 'string' ? adim.replace(/\./g, '').replace(',', '.') : adim;
   const hedefAdim = parseFloat(adim);
+
+  if (isNaN(hedefAdim)) {
+    return res.status(400).json({ error: 'Geçersiz adım değeri' });
+  }
 
   try {
     const [r] = await pool.query(`
       INSERT INTO raporlar (user_id, isim, soyisim, adim, aci, video, foto, ozel_not, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [user_id, isim, soyisim, adim, aci, video, foto, ozel_not]
+      [user_id, isim, soyisim, hedefAdim, aci, video, foto, ozel_not]
     );
 
     const bugun = new Date().toISOString().split("T")[0];
@@ -292,13 +299,13 @@ app.post('/raporlar', upload.fields([{ name: 'video' }, { name: 'foto' }]), asyn
       await pool.query(`
         INSERT INTO adim_kayitlari (user_id, isim, soyisim, tarih, hedef_adim)
         VALUES (?, ?, ?, ?, ?)`,
-        [user_id, isim, soyisim, bugun, adim]
+        [user_id, isim, soyisim, bugun, hedefAdim]
       );
     } else {
       await pool.query(`
         UPDATE adim_kayitlari SET hedef_adim = ?
         WHERE id = ?`,
-        [adim, existing[0].id]
+        [hedefAdim, existing[0].id]
       );
     }
 
@@ -360,9 +367,12 @@ app.get('/raporlar/kullanici/:user_id', async (req, res) => {
 
 app.put('/raporlar/:id', upload.fields([{ name: 'video' }, { name: 'foto' }]), async (req, res) => {
   const { id } = req.params;
-  const { isim, soyisim, adim, aci, ozel_not } = req.body;
+  let { isim, soyisim, adim, aci, ozel_not } = req.body;
   const video = req.files?.video?.[0]?.filename;
   const foto = req.files?.foto?.[0]?.filename;
+
+  adim = typeof adim === 'string' ? adim.replace(/\./g, '').replace(',', '.') : adim;
+  const hedefAdim = parseFloat(adim);
 
   try {
     const [rows] = await pool.query(`SELECT * FROM raporlar WHERE id = ?`, [id]);
@@ -376,7 +386,7 @@ app.put('/raporlar/:id', upload.fields([{ name: 'video' }, { name: 'foto' }]), a
       [
         isim || current.isim,
         soyisim || current.soyisim,
-        adim || current.adim,
+        isNaN(hedefAdim) ? current.adim : hedefAdim,
         aci || current.aci,
         video || current.video,
         foto || current.foto,
@@ -384,6 +394,26 @@ app.put('/raporlar/:id', upload.fields([{ name: 'video' }, { name: 'foto' }]), a
         id
       ]
     );
+
+    // Hedef adımı adim_kayitlari tablosunda da güncelle
+    const bugun = new Date().toISOString().split("T")[0];
+    if (!user_id) user_id = current.user_id;
+
+    if (!isNaN(hedefAdim)) {
+      const [existing] = await pool.query(`
+        SELECT id FROM adim_kayitlari
+        WHERE user_id = ? AND tarih = ?`,
+        [user_id, bugun]
+      );
+
+      if (existing.length > 0) {
+        await pool.query(`
+          UPDATE adim_kayitlari SET hedef_adim = ?
+          WHERE id = ?`,
+          [hedefAdim, existing[0].id]
+        );
+      }
+    }
 
     res.json({ message: "Rapor güncellendi" });
   } catch (e) {
@@ -405,29 +435,54 @@ app.delete('/raporlar/:id', async (req, res) => {
 });
 
 
+
+// ---------------- Günlük Adım Kayıtları ----------------
+
 // ---------------- Günlük Adım Kayıtları ----------------
 
 app.post('/adimlar', async (req, res) => {
-  const { user_id, isim, soyisim, tarih, hedef_adim, hasta_adim } = req.body;
-  if (!user_id || !isim || !soyisim || !tarih) {
+  let { user_id, isim, soyisim, tarih, hedef_adim, hasta_adim } = req.body;
+
+  if (!user_id || !isim || !soyisim) {
     return res.status(400).json({ error: 'Zorunlu alanlar eksik' });
+  }
+
+  if (!tarih) {
+    tarih = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
   }
 
   const hedef = hedef_adim !== undefined ? parseFloat(hedef_adim) : null;
   const hasta = hasta_adim !== undefined ? parseFloat(hasta_adim) : null;
 
   try {
-    const [r] = await pool.query(`
-      INSERT INTO adim_kayitlari (user_id, isim, soyisim, tarih, hedef_adim, hasta_adim)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [user_id, isim, soyisim, tarih, isNaN(hedef) ? null : hedef, isNaN(hasta) ? null : hasta]
+    const [existing] = await pool.query(
+      `SELECT id FROM adim_kayitlari WHERE user_id = ? AND tarih = ?`,
+      [user_id, tarih]
     );
-    res.json({ message: 'Adım kaydı eklendi', id: r.insertId });
+
+    if (existing.length > 0) {
+      // Kayıt varsa hasta_adim güncellenir
+      await pool.query(
+        `UPDATE adim_kayitlari SET hasta_adim = ? WHERE id = ?`,
+        [hasta, existing[0].id]
+      );
+      return res.json({ message: "Adım kaydı güncellendi", id: existing[0].id });
+    } else {
+      // Kayıt yoksa yeni kayıt eklenir
+      const [r] = await pool.query(
+        `INSERT INTO adim_kayitlari (user_id, isim, soyisim, tarih, hedef_adim, hasta_adim)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [user_id, isim, soyisim, tarih, isNaN(hedef) ? null : hedef, isNaN(hasta) ? null : hasta]
+      );
+      return res.json({ message: 'Adım kaydı eklendi', id: r.insertId });
+    }
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Kayıt eklenemedi' });
+    res.status(500).json({ error: 'Adım kaydı sırasında hata oluştu' });
   }
 });
+
+
 
 app.put('/adimlar/:id', async (req, res) => {
   const { id } = req.params;
@@ -468,6 +523,58 @@ app.get('/adimlar/kullanici/:user_id', async (req, res) => {
     res.status(500).json({ error: 'Adım kayıtları listelenemedi' });
   }
 });
+
+//----------Bildirim Kurallarını Listeleme-------------
+app.get('/bildirim-kurallari', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, tedavi_gunu, kosul, mesaj, created_at
+      FROM bildirim_kurallari
+      ORDER BY tedavi_gunu ASC
+    `);
+    res.json(rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Bildirim kuralları alınamadı' });
+  }
+});
+
+
+//---------------Yeni Bildirim Kuralı Ekleme---------
+app.post('/bildirim-kurallari', async (req, res) => {
+  const { tedavi_gunu, kosul, mesaj } = req.body;
+
+  if (!tedavi_gunu || !kosul || !mesaj) {
+    return res.status(400).json({ error: 'Tüm alanlar gereklidir' });
+  }
+
+  try {
+    const [r] = await pool.query(`
+      INSERT INTO bildirim_kurallari (tedavi_gunu, kosul, mesaj)
+      VALUES (?, ?, ?)
+    `, [tedavi_gunu, kosul, mesaj]);
+
+    res.json({ message: 'Bildirim kuralı eklendi', id: r.insertId });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Ekleme hatası' });
+  }
+});
+
+
+//----------------Bildirim Kuralı Silme-------------
+app.delete('/bildirim-kurallari/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [r] = await pool.query(`DELETE FROM bildirim_kurallari WHERE id = ?`, [id]);
+    if (r.affectedRows === 0) return res.status(404).json({ error: 'Kural bulunamadı' });
+    res.json({ message: 'Kural silindi' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Silme hatası' });
+  }
+});
+
 
 
 // ---------------- Hata Yakalama ----------------
