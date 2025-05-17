@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bildirim Tetik Planları</title>
+  <link rel="stylesheet" href="yonetimpaneli.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Yönetim Paneli</h2>
+    <ul class="nav">
+      <li class="nav-item"><a href="yonetimpaneli.html">FT Listesi</a></li>
+      <li class="nav-item"><a href="hastalistesi.html">Hasta Listesi</a></li>
+      <li class="nav-item"><a href="raporlar.html">Raporlar</a></li>
+      <li class="nav-item active"><a href="bildirim.html">Bildirimler</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h1>Bildirim Tetik Planları</h1>
+
+    <!-- Yeni Bildirim Planı Ekle -->
+    <div class="form-section">
+      <h3>Yeni Bildirim Kuralı Ekle</h3>
+      <form id="bildirim-form">
+        <div class="form-group">
+          <label for="tedavi-gunu">Tedavi Günü:</label>
+          <input type="number" id="tedavi-gunu" required min="1" placeholder="Örn: 5" />
+        </div>
+
+        <div class="form-group">
+          <label for="kosul">Tetikleme Koşulu:</label>
+          <select id="kosul" required>
+            <option value="">-- Koşul Seçin --</option>
+            <option value="adim_yok">Adım girilmemişse</option>
+            <option value="foto_yok">Fotoğraf yüklenmemişse</option>
+            <option value="video_yok">Video yüklenmemişse</option>
+            <option value="not_yok">Not girilmemişse</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mesaj">Gönderilecek Mesaj:</label>
+          <textarea id="mesaj" rows="3" required placeholder="Hastaya gönderilecek uyarı mesajı"></textarea>
+        </div>
+
+        <button type="submit" id="bildirim-ekle-btn">Kuralı Kaydet</button>
+      </form>
+    </div>
+
+    <!-- Mevcut Bildirim Kuralları -->
+    <div class="list-section">
+      <h3>Tanımlı Bildirim Kuralları</h3>
+      <table id="bildirim-tablosu">
+        <thead>
+          <tr>
+            <th>Tedavi Günü</th>
+            <th>Koşul</th>
+            <th>Mesaj</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS ile doldurulacak -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="yonetimpaneli.js"></script>
+</body>
+</html>
