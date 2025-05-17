@@ -117,40 +117,6 @@
     </table>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const userId = localStorage.getItem("userId"); // Giriş yapan hasta ID'si burada tutulmalı
-      if (!userId) return alert("Hasta bilgisi bulunamadı.");
-
-      fetch(`http://localhost:3000/patients/${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector("#tedavi-tablosu tbody");
-
-          const start = data.treatment_start ? new Date(data.treatment_start).toLocaleDateString("tr-TR") : "-";
-          const end = data.treatment_end ? new Date(data.treatment_end).toLocaleDateString("tr-TR") : "-";
-
-          let durum = "-";
-          if (data.treatment_start && data.treatment_end) {
-            const bitis = new Date(data.treatment_end);
-            const bugun = new Date();
-            durum = bitis < bugun ? "Tamamlandı" : "Devam Ediyor";
-          }
-
-          const row = `
-            <tr>
-              <td data-label="Başlangıç">${start}</td>
-              <td data-label="Bitiş">${end}</td>
-              <td data-label="Durum">${durum}</td>
-            </tr>
-          `;
-          tbody.innerHTML = row;
-        })
-        .catch(err => {
-          console.error("Tedavi planı alınamadı:", err);
-          alert("Tedavi planı verisi alınırken bir hata oluştu.");
-        });
-    });
-  </script>
+  <script src="style.js"></script>
 </body>
 </html>
